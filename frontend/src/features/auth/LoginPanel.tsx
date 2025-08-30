@@ -1,47 +1,51 @@
 import { useEffect, useState } from "react";
-import { apiFetch, API_BASE } from "../../api/client";
-import Card from "../../components/Card";
 
-type Session = { authenticated?: boolean; user?: { name?: string; [k: string]: any } } | null;
+type Me =
+  | {
+      name?: string;
+      preferred_username?: string;
+      email?: string;
+      [k: string]: any;
+    }
+  | null;
 
 export default function LoginPanel() {
-  const [session, setSession] = useState<Session>(null);
+  const [me, setMe] = useState<Me>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  async function load() {
+  async function fetchMe() {
     setErr(null);
     try {
-      // 既存実装に合わせて /auth/session を想定（なければ 200/401 のどちらかで返る API に差し替えてください）
-      const s = await apiFetch("/auth/session").catch(async (e) => {
-        // 401 などの場合は未ログインとして扱う
-        if ((e as any).message?.includes("HTTP 401")) return { authenticated: false };
-        throw e;
-      });
-      setSession(s);
+      // ★ ログイン状態の判定は /secure/me を 200 判定で
+      const res = await fetch("/secure/me", { credentials: "include" });
+      if (res.status === 200) {
+        const data = await res.json();
+        setMe(data ?? {});
+      } else if (res.status === 401) {
+        setMe(null);
+      } else {
+        setMe(null);
+        setErr(`/secure/me → HTTP ${res.status}`);
+      }
     } catch (e: any) {
-      setErr(e?.payload ? JSON.stringify(e.payload) : e.message);
+      setErr(e?.message ?? String(e));
+      setMe(null);
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    fetchMe();
+  }, []);
 
   function login() {
-    // Keycloak 等のリダイレクト型ログインを想定
-    window.location.href = API_BASE + "/auth/login";
+    // BFF が /secure/login → Keycloak へ 302
+    window.location.href = "/auth/login"; // kong が /secure/login へ付け替え
   }
 
-  async function logout() {
-    setLoading(true);
-    setErr(null);
-    try {
-      await apiFetch("/auth/logout", { method: "POST" });
-      await load();
-    } catch (e: any) {
-      setErr(e?.payload ? JSON.stringify(e.payload) : e.message);
-    } finally {
-      setLoading(false);
-    }
+  function logout() {
+    // Quarkus OIDC のログアウトエンドポイント（kong で route 済）
+    window.location.href = "/q/oidc/logout";
   }
 
   return (
@@ -49,31 +53,50 @@ export default function LoginPanel() {
       <div className="row">
         <div>
           <div className="field">
-            <label>ステータス</label>
-            <span className="badge">
-              {session?.authenticated ? "ログイン中" : "未ログイン"}
-            </span>
+            <label>ログインステータス</label>
+            <span className="badge">{me ? "ログイン中" : "未ログイン"}</span>
           </div>
-          {session?.user?.name && (
-            <div className="field">
-              <label>ユーザー</label>
-              <div>{session.user.name}</div>
-            </div>
+
+          {me && (
+            <>
+              <div className="field">
+                <label>ユーザー</label>
+                <div>{me.preferred_username ?? me.name ?? "-"}</div>
+              </div>
+              {me.email && (
+                <div className="field">
+                  <label>Email</label>
+                  <div>{me.email}</div>
+                </div>
+              )}
+            </>
           )}
         </div>
+
         <div style={{ alignSelf: "end" }}>
-          {session?.authenticated ? (
+          {me ? (
             <button onClick={logout} disabled={loading}>
-              {loading ? "ログアウト中..." : "ログアウト"}
+              ログアウト
             </button>
           ) : (
-            <button onClick={login}>ログイン</button>
+            <button onClick={login} disabled={loading}>
+              ログイン
+            </button>
           )}
         </div>
       </div>
 
+      <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+        <button onClick={fetchMe} disabled={loading}>
+          ステータス再取得
+        </button>
+      </div>
+
       {err && <pre>{err}</pre>}
-      <p className="hint">※ エンドポイントが異なる場合は <code>LoginPanel.tsx</code> 内のパスを調整してください。</p>
+      <p className="hint">
+        ※ セッション Cookie は <code>credentials: "include"</code> で送信しています。Kong 側は
+        <code>/auth/* → /secure/*</code> の付け替え（strip_path:true）が設定済みです。
+      </p>
     </>
   );
 }

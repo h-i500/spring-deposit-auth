@@ -6,36 +6,36 @@ services:
   - name: bff
     url: http://bff:8080
     routes:
-      # 1) OIDC コールバック（完全一致）
       - name: secure-callback
         expression: (http.path == "/secure/callback")
         strip_path: false
 
-      # 2) /secure 全体（ログイン開始や /secure/me 等）
       - name: secure-all
         expression: (http.path ^= "/secure")
         strip_path: false
 
-      # 3) /api は BFF へ
       - name: api
         expression: (http.path ^= "/api")
         strip_path: true
-      
-      # ★ 追加（これが無いと 404 になる）
+
       - name: oidc-logout
         expression: (http.path == "/q/oidc/logout")
         strip_path: false
 
-  # === Frontend (Vite/静的) ===
+  # === BFF alias: /auth/* -> /secure/* ===
+  - name: bff-auth
+    url: http://bff:8080/secure
+    routes:
+      - name: auth-all
+        expression: (http.path ^= "/auth")
+        strip_path: true
+        preserve_host: false
+
+  # === Frontend (Vite preview on 5173) ===
   - name: frontend
     url: http://frontend:5173
     routes:
-      # /app/* を frontend の / に当てる
-      - name: app
+      - name: frontend-app
         expression: (http.path ^= "/app")
-        strip_path: true
-
-      # /assets/* はそのまま
-      - name: app-assets
-        expression: (http.path ^= "/assets")
         strip_path: false
+        preserve_host: false
