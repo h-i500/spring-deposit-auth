@@ -5,6 +5,8 @@ import jakarta.ws.rs.core.*;
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -47,10 +49,18 @@ public class SecureResource {
     }
 
     // ログアウト → /app/ に戻す
+    // @GET
+    // @Path("/logout")
+    // public Response logout() {
+    //     String url = "/q/oidc/logout?post_logout_redirect_uri=http://localhost:8000/app/";
+    //     return Response.seeOther(URI.create(url)).build();
+    // }
+
     @GET
     @Path("/logout")
     public Response logout() {
-        String url = "/q/oidc/logout?post_logout_redirect_uri=http://localhost:8000/app/";
+        String back = "http://localhost:8000/app/";
+        String url  = "http://localhost:8000/q/oidc/logout?post_logout_redirect_uri=" + URLEncoder.encode(back, StandardCharsets.UTF_8);
         return Response.seeOther(URI.create(url)).build();
     }
 

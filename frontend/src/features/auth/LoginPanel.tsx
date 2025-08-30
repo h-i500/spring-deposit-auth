@@ -1,67 +1,110 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-type Me =
-  | {
-      name?: string;
-      preferred_username?: string;
-      email?: string;
-      [k: string]: any;
-    }
-  | null;
+type Me = {
+  principal?: string;
+  preferred_username?: string;
+  email?: string;
+  [k: string]: any;
+} | null;
+
+type Probe = {
+  url: string;
+  status: number;
+  contentType: string;
+  bodyHead: string; // 先頭数百文字だけ
+};
 
 export default function LoginPanel() {
   const [me, setMe] = useState<Me>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [probe, setProbe] = useState<Probe | null>(null);
 
-  async function fetchMe() {
+  const fetchMe = useCallback(async () => {
+    setLoading(true);
     setErr(null);
+    setProbe(null);
     try {
-      // ★ ログイン状態の判定は /secure/me を 200 判定で
-      const res = await fetch("/secure/me", { credentials: "include" });
-      if (res.status === 200) {
-        const data = await res.json();
-        setMe(data ?? {});
+      // ★ 直で /secure/me を叩く（Cookie Path が /secure でも確実に一致）
+      const url = `/secure/me?t=${Date.now()}`;
+      const res = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+        redirect: "follow",
+      });
+
+      const contentType = res.headers.get("content-type") || "";
+      const raw = await res.text();
+      setProbe({
+        url,
+        status: res.status,
+        contentType,
+        bodyHead: raw.slice(0, 400),
+      });
+
+      if (res.status === 200 && contentType.includes("application/json")) {
+        // JSON だったらログイン中
+        try {
+          const data = raw ? JSON.parse(raw) : {};
+          setMe(data);
+        } catch {
+          // JSON パースできなければ未ログイン扱い
+          setMe(null);
+        }
       } else if (res.status === 401) {
+        // 401 は未ログイン
         setMe(null);
       } else {
+        // 302追従後にHTMLが返った・他のコード等は未ログイン扱い
         setMe(null);
-        setErr(`/secure/me → HTTP ${res.status}`);
       }
     } catch (e: any) {
       setErr(e?.message ?? String(e));
       setMe(null);
+    } finally {
+      setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     fetchMe();
-  }, []);
+  }, [fetchMe]);
 
-  function login() {
-    // BFF が /secure/login → Keycloak へ 302
-    window.location.href = "/auth/login"; // kong が /secure/login へ付け替え
-  }
+  const login = () => {
+    // Kong が /auth/* → /secure/* へ付け替え
+    window.location.href = "/auth/login";
+  };
 
-  function logout() {
-    // Quarkus OIDC のログアウトエンドポイント（kong で route 済）
-    window.location.href = "/q/oidc/logout";
-  }
+  const logout = () => {
+    // SecureResource の /secure/logout は /q/oidc/logout へ 303
+    // 直接 /q/oidc/logout を叩いてもOK（kong でルート定義済）
+    window.location.href = "/auth/logout";
+  };
+  // const logout = () => {
+  //   const back = encodeURIComponent(`${window.location.origin}/app/`);
+  //   window.location.href = `/q/oidc/logout?post_logout_redirect_uri=${back}`;
+  // };
 
   return (
-    <>
+    <section className="card">
+      <h2>認証（ログイン／ログアウト）</h2>
+
       <div className="row">
         <div>
           <div className="field">
             <label>ログインステータス</label>
             <span className="badge">{me ? "ログイン中" : "未ログイン"}</span>
           </div>
-
           {me && (
             <>
               <div className="field">
                 <label>ユーザー</label>
-                <div>{me.preferred_username ?? me.name ?? "-"}</div>
+                <div>{me.preferred_username ?? me.principal ?? "-"}</div>
               </div>
               {me.email && (
                 <div className="field">
@@ -92,11 +135,20 @@ export default function LoginPanel() {
         </button>
       </div>
 
-      {err && <pre>{err}</pre>}
+      {/* 診断情報（何が返ってきているか一目でわかる） */}
+      {probe && (
+        <details style={{ marginTop: 8 }}>
+          <summary>診断情報（/secure/me のレスポンス）</summary>
+          <pre>{JSON.stringify(probe, null, 2)}</pre>
+        </details>
+      )}
+
+      {err && <pre style={{ color: "crimson" }}>{err}</pre>}
+
       <p className="hint">
-        ※ セッション Cookie は <code>credentials: "include"</code> で送信しています。Kong 側は
-        <code>/auth/* → /secure/*</code> の付け替え（strip_path:true）が設定済みです。
+        ※ XHR は <code>credentials: "include"</code> で送信しています。レスポンスが 200 かつ
+        <code>application/json</code> の場合のみ「ログイン中」と判定します。
       </p>
-    </>
+    </section>
   );
 }
