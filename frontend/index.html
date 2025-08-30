@@ -1,85 +1,12 @@
 <!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <title>Bank Demo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 24px; }
-    h2 { margin-top: 32px; }
-    button { padding: 8px 12px; margin-right: 8px; }
-    input, select { padding: 6px; margin-right: 8px; }
-    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin: 16px 0; }
-    .row { margin: 8px 0; }
-    code { background: #f6f8fa; padding: 2px 6px; border-radius: 4px; }
-    .muted { color: #666; }
-  </style>
-</head>
-<body>
-  <h1>Bank Demo (BFF /api 対応版)</h1>
-
-  <div class="card">
-    <h2>ログイン / ユーザー情報</h2>
-    <div class="row">
-      <button id="loginBtn">ログイン</button>
-      <button id="meBtn">/secure/me</button>
-      <span id="userBox" class="muted">未取得</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>普通預金（Savings）</h2>
-
-    <div class="row">
-      <strong>口座ID:</strong>
-      <input id="accountId" size="38" placeholder="作成後に自動で入ります（localStorage 保存）" />
-      <button id="getAccountBtn">取得</button>
-    </div>
-
-    <div class="row">
-      <strong>新規作成:</strong>
-      <input id="owner" placeholder="名義 e.g. Demo User" />
-      <button id="createBtn">POST /api/savings/accounts</button>
-    </div>
-
-    <div class="row">
-      <strong>入金:</strong>
-      <input id="depAmount" type="number" step="0.01" placeholder="金額" />
-      <button id="depositBtn">POST /api/savings/accounts/{id}/deposit</button>
-    </div>
-
-    <div class="row">
-      <strong>出金:</strong>
-      <input id="wdAmount" type="number" step="0.01" placeholder="金額" />
-      <button id="withdrawBtn">POST /api/savings/accounts/{id}/withdraw</button>
-    </div>
-
-    <div class="row">
-      <pre id="accountOut" class="muted">口座情報の結果がここに表示されます</pre>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>定期預金（Time Deposit）</h2>
-    <div class="row">
-      <span class="muted">※ バックエンドに「商品一覧」はありません。フロントで固定プランを選択します。</span>
-    </div>
-    <div class="row">
-      <strong>プラン:</strong>
-      <select id="plan">
-        <option value="3">3ヶ月（想定年率 0.50%）</option>
-        <option value="6">6ヶ月（想定年率 0.80%）</option>
-        <option value="12">12ヶ月（想定年率 1.20%）</option>
-      </select>
-      <strong>金額:</strong>
-      <input id="tdAmount" type="number" step="0.01" placeholder="金額" />
-      <button id="transferBtn">POST /api/time-deposits/transfers</button>
-    </div>
-    <div class="row">
-      <pre id="tdOut" class="muted">定期預金申込の結果がここに表示されます</pre>
-    </div>
-  </div>
-
-  <script src="./app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deposit Demo</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
