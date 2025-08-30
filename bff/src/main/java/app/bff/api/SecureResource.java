@@ -56,13 +56,13 @@ public class SecureResource {
     //     return Response.seeOther(URI.create(url)).build();
     // }
 
-    @GET
-    @Path("/logout")
-    public Response logout() {
-        String back = "http://localhost:8000/app/";
-        String url  = "http://localhost:8000/q/oidc/logout?post_logout_redirect_uri=" + URLEncoder.encode(back, StandardCharsets.UTF_8);
-        return Response.seeOther(URI.create(url)).build();
-    }
+    // @GET
+    // @Path("/logout")
+    // public Response logout() {
+    //     String back = "http://localhost:8000/app/";
+    //     String url  = "http://localhost:8000/q/oidc/logout?post_logout_redirect_uri=" + URLEncoder.encode(back, StandardCharsets.UTF_8);
+    //     return Response.seeOther(URI.create(url)).build();
+    // }
 
     @GET
     @Path("/callback")

@@ -80,15 +80,16 @@ export default function LoginPanel() {
     window.location.href = "/auth/login";
   };
 
-  const logout = () => {
-    // SecureResource の /secure/logout は /q/oidc/logout へ 303
-    // 直接 /q/oidc/logout を叩いてもOK（kong でルート定義済）
-    window.location.href = "/auth/logout";
-  };
   // const logout = () => {
-  //   const back = encodeURIComponent(`${window.location.origin}/app/`);
-  //   window.location.href = `/q/oidc/logout?post_logout_redirect_uri=${back}`;
+  //   // SecureResource の /secure/logout は /q/oidc/logout へ 303
+  //   // 直接 /q/oidc/logout を叩いてもOK（kong でルート定義済）
+  //   window.location.href = "/auth/logout";
   // };
+  const logout = () => {
+    // 絶対URLを安全に組み立て（/auth 混入を回避）
+    const url = new URL("/secure/logout", window.location.origin);
+    window.location.assign(url.toString());
+  };
 
   return (
     <section className="card">
