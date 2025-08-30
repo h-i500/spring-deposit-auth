@@ -1,0 +1,18 @@
+
+
+ログイン
+```
+scripts/login-with-curl.sh                  # 既定: testuser/password
+USERNAME=testuser PASSWORD=password scripts/login-with-curl.sh  # 上書きも可
+```
+
+便利コマンド（ログアウト・再ログイン）
+・ログアウト（Keycloak セッション破棄 + フロントへ戻す）
+```
+curl -i -b .cookies.txt http://localhost:8000/logout
+rm -f .cookies.txt
+```
+・再ログイン
+```
+scripts/login-with-curl.sh
+```
