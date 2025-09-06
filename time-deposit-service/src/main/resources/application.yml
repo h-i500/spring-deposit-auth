@@ -1,0 +1,27 @@
+server:
+  port: 8082 # savings-service 側。time-deposit は 8082
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:timedeposit}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/demo-realm
+          # または jwk-set-uri: http://keycloak:8080/realms/demo-realm/protocol/openid-connect/certs
+  sql:
+    init:
+      mode: always
+  main:
+    web-application-type: servlet
+
+savings:
+  base-url: ${SAVINGS_BASE_URL:http://savings-service:8080}
+

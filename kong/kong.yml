@@ -1,0 +1,45 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  # === BFF (Quarkus) ===
+  - name: bff
+    url: http://bff:8080
+    routes:
+      # OIDC コールバック（厳密一致）
+      - name: secure-callback
+        expression: (http.path == "/secure/callback")
+        strip_path: false
+
+      # /secure 配下
+      - name: secure-all
+        expression: (http.path ^= "/secure")
+        strip_path: false
+
+      # /api 配下は strip しない（BFF に /api/... のまま渡す）
+      - name: api-all
+        expression: (http.path ^= "/api")
+        strip_path: false
+
+      # Quarkus の OIDC ログアウト
+      - name: oidc-logout
+        expression: (http.path == "/q/oidc/logout")
+        strip_path: false
+
+  # === /auth/* -> BFF の /secure/* へエイリアス ===
+  - name: bff-auth
+    url: http://bff:8080/secure
+    routes:
+      - name: auth-all
+        expression: (http.path ^= "/auth")
+        strip_path: true
+        preserve_host: false
+
+  # === Frontend (Vite preview on 5173) ===
+  - name: frontend
+    url: http://frontend:5173
+    routes:
+      - name: frontend-app
+        expression: (http.path ^= "/app")
+        strip_path: false
+        preserve_host: false
