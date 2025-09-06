@@ -10,6 +10,8 @@ export default function DebugPanel() {
   const [tds, setTds] = useState<TimeDepositDto[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const fmt = (s?: string) => (s ? new Date(s).toLocaleString() : "-");
+
   const onSearch = async () => {
     setLoading(true); setError(null);
     try {
@@ -49,9 +51,14 @@ export default function DebugPanel() {
           {!savings && <div>（未検索）</div>}
           {savings?.length === 0 && <div>該当なし</div>}
           <div style={{ display: "grid", gap: 8 }}>
-            {savings?.map(a => (
+            {savings?.map((a) => (
               <Card key={`s-${a.id}`}>
-                <div><b>{a.accountNo}</b> {a.ownerName}（{a.ownerId}）</div>
+                <div>
+                  <b>{a.accountNo ?? a.id}</b>{" "}
+                  {/* ownerName / ownerId が無ければ owner 単体を使う */}
+                  {a.ownerName ?? a.owner ?? "-"}
+                  {a.ownerId ? `（${a.ownerId}）` : ""}
+                </div>
                 <div>支店: {a.branchCode ?? "-"}</div>
                 <div>残高: {a.balance ?? "-"}</div>
               </Card>
@@ -64,14 +71,15 @@ export default function DebugPanel() {
           {!tds && <div>（未検索）</div>}
           {tds?.length === 0 && <div>該当なし</div>}
           <div style={{ display: "grid", gap: 8 }}>
-            {tds?.map(a => (
-              <Card key={`t-${a.id}`}>
-                <div><b>{a.accountNo}</b> {a.ownerName}（{a.ownerId}）</div>
-                <div>期間(月): {a.termMonths ?? "-"}</div>
-                <div>金額: {a.amount ?? "-"}</div>
-                <div>開始日: {a.startDate ?? "-"}</div>
-                <div>満期日: {a.maturityDate ?? "-"}</div>
-                <div>金利: {a.interestRate ?? "-"}</div>
+            {tds?.map(t => (
+              <Card key={`t-${t.id}`}>
+                <div><b>{t.id}</b> {t.owner}</div>
+                <div>期間(月): {t.termMonths ?? "-"}</div>
+                <div>金額: {t.principal?.toLocaleString?.() ?? t.principal ?? "-"}</div>
+                <div>開始日: {fmt(t.startAt)}</div>
+                <div>満期日: {fmt(t.maturityAt)}</div>
+                <div>金利: {t.interestRate ?? "-"}</div>
+                <div>状態: {t.status ?? "-"}</div>
               </Card>
             ))}
           </div>

@@ -1,20 +1,27 @@
-export interface SavingsAccountDto {
-  id: number;
-  accountNo: string;
-  ownerId: string;
-  ownerName: string;
+
+export type SavingsAccountDto = {
+  id: string;
+  accountNo?: string;
   branchCode?: string;
   balance?: number;
-}
 
-export interface TimeDepositDto {
-  id: number;
-  accountNo: string;
-  ownerId: string;
-  ownerName: string;
+  // 既存の想定（あれば使う）
+  ownerId?: string;
+  ownerName?: string;
+
+  // debug API が owner だけ返すケースに備えたフォールバック
+  owner?: string;
+};
+
+
+// 既存の export はそのままにして、TimeDepositDto だけ更新
+export type TimeDepositDto = {
+  id: string;
+  owner: string;
+  principal: number;
+  status: 'OPEN' | 'CLOSED' | string;
+  startAt?: string;       // ISO文字列
+  maturityAt?: string;    // ISO文字列
   termMonths?: number;
-  amount?: number;
-  startDate?: string;
-  maturityDate?: string;
   interestRate?: number;
-}
+};
