@@ -3,6 +3,7 @@ import React from "react";
 import LoginPanel from "./features/auth/LoginPanel";
 import SavingsPanel from "./features/savings/SavingsPanel";
 import TimeDepositPanel from "./features/timeDeposit/TimeDepositPanel";
+import DebugPanel from "./features/debug/DebugPanel";
 
 export default function App() {
   return (
@@ -31,6 +32,10 @@ export default function App() {
 
         {/* 定期預金（作成／満期解約） */}
         <TimeDepositPanel />
+
+        {/* デバッグ: 開発時のみ表示 */}
+        {/* {import.meta.env.DEV && <DebugPanel />} */}
+        <DebugPanel />
 
       </main>
 
