@@ -77,6 +77,22 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions><execution><goals><goal>enforce</goal></goals></execution></executions>
+        <configuration>
+          <rules>
+            <bannedDependencies>
+              <excludes>
+                <exclude>io.quarkus:quarkus-resteasy*</exclude>
+                <exclude>org.jboss.resteasy:*</exclude>
+              </excludes>
+            </bannedDependencies>
+          </rules>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
