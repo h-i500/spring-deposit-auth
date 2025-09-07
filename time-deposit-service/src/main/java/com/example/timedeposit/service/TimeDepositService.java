@@ -1,6 +1,6 @@
 package com.example.timedeposit.service;
 
-import com.example.timedeposit.api.TransferRequest;
+// import com.example.timedeposit.api.TransferRequest;
 import com.example.timedeposit.client.SavingsClient;
 import com.example.timedeposit.model.TimeDeposit;
 import com.example.timedeposit.repository.TimeDepositRepository;
