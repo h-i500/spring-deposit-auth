@@ -111,7 +111,7 @@ export default function SavingsPanel() {
 
   return (
     <div style={{ padding: 16 }}>
-      <h2>普通預金（サンプル）</h2>
+      <h2>普通預金</h2>
 
       <div style={{ marginTop: 8 }}>
         <label>
