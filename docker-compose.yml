@@ -110,7 +110,7 @@ services:
       POSTGRES_PASSWORD: kong
     volumes:
       - kong_data:/var/lib/postgresql/data
-      - ./init-konga-db.sql:/docker-entrypoint-initdb.d/init-konga-db.sql
+      - ./konga/init-konga-db.sql:/docker-entrypoint-initdb.d/init-konga-db.sql
     networks: [app-net]
 
   konga:
