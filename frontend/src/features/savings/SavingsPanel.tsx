@@ -2,55 +2,66 @@
 import { useEffect, useState } from "react";
 import type { SavingsAccount } from "./api";
 import {
-  getOrCreateMyAccount,
   createAccount,
   deposit,
   withdraw,
   clearSavedAccountId,
   ACCOUNT_ID_KEY,
   getAccountById,
+  getMyAccountIfExists,
+  AuthRequiredError,
 } from "./api";
+import { useAuth } from "../auth/useAuth"; // ★ 追加
 
 export default function SavingsPanel() {
+  const { isAuthenticated, loading: authLoading, promptLogin } = useAuth(); // ★
   const [account, setAccount] = useState<SavingsAccount | null>(null);
   const [owner, setOwner] = useState<string>("Demo User");
   const [amount, setAmount] = useState<string>("1000");
   const [loading, setLoading] = useState<boolean>(false);
   const [err, setErr] = useState<string>("");
 
-  // 初期表示：既存IDがあれば取得、無ければ作成して取得
+  // 初期表示：保存IDがあれば「取得」だけする（★作成しない★）
   useEffect(() => {
     (async () => {
       setLoading(true);
       setErr("");
       try {
-        const acc = await getOrCreateMyAccount(owner);
+        const acc = await getMyAccountIfExists();
         setAccount(acc);
       } catch (e: any) {
-        setErr(e?.message ?? String(e));
+        if (e instanceof AuthRequiredError) {
+          // 未認証 → 何もしない（UIでログインを促す）
+        } else {
+          setErr(e?.message ?? String(e));
+        }
       } finally {
         setLoading(false);
       }
     })();
-    // owner は初期作成時にのみ使いたいので、依存配列に含めない
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onCreateNew = async () => {
+    if (!isAuthenticated) {
+      // ★ 自動作成禁止：未認証ならログインだけ促す
+      setErr("ログインが必要です。ログインすると作成できます。");
+      promptLogin();
+      return;
+    }
     setLoading(true);
     setErr("");
     try {
-      // 保存済みIDをクリアして新規作成
       clearSavedAccountId();
       const acc = await createAccount(owner || "Demo User");
-      try {
-        localStorage.setItem(ACCOUNT_ID_KEY, acc.id);
-      } catch {
-        /* ignore */
-      }
+      try { localStorage.setItem(ACCOUNT_ID_KEY, acc.id); } catch {}
       setAccount(acc);
     } catch (e: any) {
-      setErr(e?.message ?? String(e));
+      if (e instanceof AuthRequiredError) {
+        setErr("ログインセッションが切れました。再度ログインしてください。");
+        promptLogin();
+      } else {
+        setErr(e?.message ?? String(e));
+      }
     } finally {
       setLoading(false);
     }
@@ -58,6 +69,8 @@ export default function SavingsPanel() {
 
   const onDeposit = async () => {
     if (!account) return;
+    if (!isAuthenticated) { setErr("ログインが必要です。"); promptLogin(); return; }
+
     const amt = Number(amount);
     if (!Number.isFinite(amt) || amt <= 0) {
       setErr("金額を正しく入力してください。");
@@ -69,7 +82,12 @@ export default function SavingsPanel() {
       const acc = await deposit(account.id, amt);
       setAccount(acc);
     } catch (e: any) {
-      setErr(e?.message ?? String(e));
+      if (e instanceof AuthRequiredError) {
+        setErr("ログインセッションが切れました。再度ログインしてください。");
+        promptLogin();
+      } else {
+        setErr(e?.message ?? String(e));
+      }
     } finally {
       setLoading(false);
     }
@@ -77,6 +95,8 @@ export default function SavingsPanel() {
 
   const onWithdraw = async () => {
     if (!account) return;
+    if (!isAuthenticated) { setErr("ログインが必要です。"); promptLogin(); return; }
+
     const amt = Number(amount);
     if (!Number.isFinite(amt) || amt <= 0) {
       setErr("金額を正しく入力してください。");
@@ -88,13 +108,17 @@ export default function SavingsPanel() {
       const acc = await withdraw(account.id, amt);
       setAccount(acc);
     } catch (e: any) {
-      setErr(e?.message ?? String(e));
+      if (e instanceof AuthRequiredError) {
+        setErr("ログインセッションが切れました。再度ログインしてください。");
+        promptLogin();
+      } else {
+        setErr(e?.message ?? String(e));
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // 追加: 残高照会（最新の口座情報をサーバから再取得）
   const onInquiry = async () => {
     if (!account) return;
     setLoading(true);
@@ -103,11 +127,18 @@ export default function SavingsPanel() {
       const fresh = await getAccountById(account.id);
       setAccount(fresh);
     } catch (e: any) {
-      setErr(e?.message ?? String(e));
+      if (e instanceof AuthRequiredError) {
+        setErr("ログインセッションが切れました。再度ログインしてください。");
+        promptLogin();
+      } else {
+        setErr(e?.message ?? String(e));
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const disabledByAuth = authLoading || !isAuthenticated;
 
   return (
     <div style={{ padding: 16 }}>
@@ -121,11 +152,17 @@ export default function SavingsPanel() {
             onChange={(e) => setOwner(e.target.value)}
             placeholder="Demo User"
             style={{ marginLeft: 8 }}
+            disabled={disabledByAuth}
           />
         </label>
-        <button style={{ marginLeft: 8 }} onClick={onCreateNew} disabled={loading}>
+        <button style={{ marginLeft: 8 }} onClick={onCreateNew} disabled={loading || disabledByAuth}>
           新規口座を作成
         </button>
+        {!isAuthenticated && !authLoading && (
+          <button style={{ marginLeft: 8 }} onClick={() => promptLogin()}>
+            ログイン
+          </button>
+        )}
       </div>
 
       {loading && <p style={{ marginTop: 8 }}>処理中...</p>}
@@ -146,7 +183,7 @@ export default function SavingsPanel() {
             </div>
           </>
         ) : (
-          <div>口座がありません。上の「新規口座を作成」を押すか、再読み込みしてください。</div>
+          <div>口座がありません。ログイン後に「新規口座を作成」を押してください。</div>
         )}
       </div>
 
@@ -158,28 +195,16 @@ export default function SavingsPanel() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             style={{ marginLeft: 8 }}
+            disabled={disabledByAuth || !account}
           />
         </label>
-        <button
-          style={{ marginLeft: 8 }}
-          onClick={onDeposit}
-          disabled={loading || !account}
-        >
+        <button style={{ marginLeft: 8 }} onClick={onDeposit} disabled={loading || disabledByAuth || !account}>
           入金
         </button>
-        <button
-          style={{ marginLeft: 8 }}
-          onClick={onWithdraw}
-          disabled={loading || !account}
-        >
+        <button style={{ marginLeft: 8 }} onClick={onWithdraw} disabled={loading || disabledByAuth || !account}>
           出金
         </button>
-        <button
-          style={{ marginLeft: 8 }}
-          onClick={onInquiry}
-          disabled={loading || !account}
-          title="最新のサーバ値で残高を更新"
-        >
+        <button style={{ marginLeft: 8 }} onClick={onInquiry} disabled={loading || !account}>
           残高照会
         </button>
       </div>

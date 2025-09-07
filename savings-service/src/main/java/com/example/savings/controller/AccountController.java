@@ -22,7 +22,7 @@ public class AccountController {
     public record CreateAccountRequest(@NotBlank String owner) {}
     public record MoneyRequest(@NotNull BigDecimal amount) {}
 
-    // 作成は “user” 権限
+    // // 作成は “user” 権限
     @PreAuthorize("hasRole('user')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateAccountRequest req) {
@@ -34,6 +34,18 @@ public class AccountController {
                 "createdAt", a.getCreatedAt()
         ));
     }
+    // @PreAuthorize("hasRole('user')")
+    // @PostMapping("/api/savings/accounts")
+    // public AccountDto createAccount(
+    //     @AuthenticationPrincipal Jwt jwt,
+    //     @RequestBody CreateAccountRequest req
+    // ) {
+    //     // リクエストボディの ownerKey は信用せず、トークンから取得
+    //     String owner = Optional.ofNullable(jwt.getClaimAsString("preferred_username"))
+    //                         .orElse(jwt.getSubject());
+    //     // owner を上書きして保存
+    //     return service.create(owner, req.initialDeposit());
+    // }
 
     // 参照は “read” 権限
     @PreAuthorize("hasRole('read')")
