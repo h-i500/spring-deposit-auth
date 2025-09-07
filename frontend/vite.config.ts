@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 // /app/ 配下で配信（Kong で /app にリバースプロキシ）
 export default defineConfig({
   base: "/app/",
+  // base: './',   // ← ここを './' に
   plugins: [react()],
 
   // 開発（npm run dev）時の API プロキシ：ローカルで直接叩く場合に使用
