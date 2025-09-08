@@ -1,7 +1,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>app.bff</groupId>
-  <artifactId>bff</artifactId>
+  <artifactId>mashup-savings-term-deposits</artifactId>
   <version>1.0.0</version>
 
 
@@ -29,11 +29,11 @@
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-jackson</artifactId> <!-- ← 新名称 -->
+      <artifactId>quarkus-rest-jackson</artifactId> <!-- ↁE新名称 -->
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-client-jackson</artifactId> <!-- ← 新名称 -->
+      <artifactId>quarkus-rest-client-jackson</artifactId> <!-- ↁE新名称 -->
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -60,7 +60,7 @@
           <execution><goals><goal>build</goal></goals></execution>
         </executions>
       </plugin>
-      <!-- ★ 念のため compiler と resources も UTF-8 明示 -->
+      <!-- ☁E念のため compiler と resources めEUTF-8 明示 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

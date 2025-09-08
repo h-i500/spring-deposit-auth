@@ -99,7 +99,7 @@ services:
     volumes:
       - ./kong/kong.yml:/usr/local/kong/declarative/kong.yml:ro
       - ./kong/kong-nginx-http.conf:/usr/local/kong/nginx-http.conf:ro
-    depends_on: [bff, frontend]
+    depends_on: [mashup-savings-term-deposits, frontend]
     networks: [app-net]
 
   kong-database:
@@ -142,9 +142,9 @@ services:
       - "8080:8080"
     networks: [app-net]
 
-  bff:
-    build: ./bff
-    container_name: bff
+  mashup-savings-term-deposits:
+    build: ./mashup-savings-term-deposits
+    container_name: mashup-savings-term-deposits
     # 公開クライアント（PKCE）で動かすため client-secret は不要
     # environment:
     #   - OIDC_CLIENT_SECRET=bff-secret
