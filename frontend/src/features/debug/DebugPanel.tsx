@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { fetchSavingsByOwner, fetchTimeDepositsByOwner } from "../../api/debug";
+import { fetchSavingsByOwner, fetchTimeDepositsByOwner, fetchOwners } from "../../api/debug";
+// import { fetchSavingsByOwner, fetchTimeDepositsByOwner } from "../../api/debug";
 import type { SavingsAccountDto, TimeDepositDto } from "../../types/account";
 import Card from "../../components/Card";
 
@@ -10,20 +11,52 @@ export default function DebugPanel() {
   const [tds, setTds] = useState<TimeDepositDto[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [owners, setOwners] = useState<string[] | null>(null);
+  const [ownersLoading, setOwnersLoading] = useState(false);
+
   const fmt = (s?: string) => (s ? new Date(s).toLocaleString() : "-");
 
-  const onSearch = async () => {
+  // const onSearch = async () => {
+  //   setLoading(true); setError(null);
+  //   try {
+  //     const [s, t] = await Promise.all([
+  //       fetchSavingsByOwner(key),
+  //       fetchTimeDepositsByOwner(key),
+  //     ]);
+  //     setSavings(s); setTds(t);
+  //   } catch (e: any) {
+  //     setError(e?.message ?? "検索に失敗しました");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const onSearch = async (ownerKey?: string) => {
+    const k = (ownerKey ?? key).trim();
+    if (!k) return;                 // 空は何もしない
     setLoading(true); setError(null);
     try {
       const [s, t] = await Promise.all([
-        fetchSavingsByOwner(key),
-        fetchTimeDepositsByOwner(key),
+        fetchSavingsByOwner(k),
+        fetchTimeDepositsByOwner(k),
       ]);
       setSavings(s); setTds(t);
     } catch (e: any) {
       setError(e?.message ?? "検索に失敗しました");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onLoadOwners = async () => {
+    setOwnersLoading(true); setError(null);
+    try {
+      const list = await fetchOwners();
+      setOwners(list);
+    } catch (e: any) {
+      setError(e?.message ?? "owner一覧の取得に失敗しました");
+    } finally {
+      setOwnersLoading(false);
     }
   };
 
@@ -38,10 +71,36 @@ export default function DebugPanel() {
           onChange={(e) => setKey(e.target.value)}
           style={{ flex: 1, padding: 8 }}
         />
-        <button onClick={onSearch} disabled={!key || loading}>
+        {/* <button onClick={onSearch} disabled={!key || loading}>
+          {loading ? "検索中…" : "検索"}
+        </button> */}
+
+        <button onClick={() => onSearch()} disabled={!key || loading}>
           {loading ? "検索中…" : "検索"}
         </button>
+
+        {/* owner一覧ボタン */}
+        <button onClick={onLoadOwners} disabled={ownersLoading}>
+          {ownersLoading ? "取得中…" : "owner一覧"}
+        </button>
       </div>
+
+      {/* owner一覧の表示（クリックで検索） */}
+      {owners && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+          {owners.length === 0 && <span>オーナーなし</span>}
+          {owners.map(o => (
+            <button
+              key={o}
+              onClick={() => { setKey(o); onSearch(o); }}   // ← これでエラー解消
+              style={{ padding:"4px 8px", borderRadius:999, border:"1px solid #ccc", background:"#f9f9f9", cursor:"pointer" }}
+              title={`"${o}" で検索`}
+            >
+              {o}
+            </button>
+          ))}
+        </div>
+      )}
 
       {error && <div style={{ color: "crimson" }}>{error}</div>}
 

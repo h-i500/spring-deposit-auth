@@ -15,4 +15,7 @@ public interface TimeDepositAccountRepository extends JpaRepository<TimeDeposit,
     where lower(t.owner) like lower(concat('%', :key, '%'))
   """)
   List<TimeDeposit> searchByOwnerKey(@Param("key") String key);
+
+  @Query("select distinct t.owner from TimeDeposit t where t.owner is not null order by t.owner")
+  List<String> findDistinctOwners();
 }
