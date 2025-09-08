@@ -16,8 +16,8 @@
 
   "clients": [
     {
-      "clientId": "bff",
-      "name": "bff",
+      "clientId": "mashup-savings-term-deposits",
+      "name": "mashup-savings-term-deposits",
       "protocol": "openid-connect",
       "publicClient": true,
       "standardFlowEnabled": true,

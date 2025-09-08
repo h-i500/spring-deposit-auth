@@ -3,8 +3,8 @@ _transform: true
 
 services:
   # === BFF (Quarkus) ===
-  - name: bff
-    url: http://bff:8080
+  - name: mashup-savings-term-deposits
+    url: http://mashup-savings-term-deposits:8080
     routes:
       # OIDC コールバック（厳密一致）
       - name: secure-callback
@@ -27,8 +27,8 @@ services:
         strip_path: false
 
   # === /auth/* -> BFF の /secure/* へエイリアス ===
-  - name: bff-auth
-    url: http://bff:8080/secure
+  - name: mstd-auth
+    url: http://mashup-savings-term-deposits:8080/secure
     routes:
       - name: auth-all
         expression: (http.path ^= "/auth")
