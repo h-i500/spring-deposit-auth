@@ -42,3 +42,9 @@ export async function fetchTimeDepositsByOwner(ownerKey: string): Promise<TimeDe
     interestRate: r.interestRate ?? r.interest_rate,
   }));
 }
+
+export async function fetchOwners(): Promise<string[]> {
+  const res = await fetch("/api/debug/owners", { credentials: "include" });
+  if (!res.ok) throw new Error("owner一覧の取得に失敗しました");
+  return res.json();
+}

@@ -14,4 +14,8 @@ public interface SavingsAccountRepository extends JpaRepository<Account, UUID> {
     where lower(a.owner) like lower(concat('%', :key, '%'))
   """)
   List<Account> searchByOwnerKey(@Param("key") String key);
+
+  // ★ 追加: オーナー名の重複排除一覧
+  @Query("select distinct a.owner from Account a where a.owner is not null order by a.owner")
+  List<String> findDistinctOwners();
 }

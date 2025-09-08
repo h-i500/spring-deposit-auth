@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-// ★ 追加
+
 import com.example.savings.model.Account;
+import com.example.savings.repository.SavingsAccountRepository; 
 
 /**
  * デバッグ用検索API: /debug/savings?ownerKey=xxx
@@ -23,6 +24,11 @@ public class DebugController {
 
     @PersistenceContext
     EntityManager em;
+    private final SavingsAccountRepository repo;
+
+    public DebugController(SavingsAccountRepository repo) {
+        this.repo = repo;
+    }
 
     @GetMapping("/savings")
     public List<Account> findByOwner(@RequestParam("ownerKey") String ownerKey) {
@@ -32,5 +38,10 @@ public class DebugController {
                     Account.class)
                  .setParameter("ownerKey", ownerKey)
                  .getResultList();
+    }
+
+    @GetMapping("/owners")
+    public List<String> listOwners() {
+        return repo.findDistinctOwners();
     }
 }
