@@ -1,4 +1,5 @@
-package app.bff.debug;
+
+package app.mstd.debug;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;

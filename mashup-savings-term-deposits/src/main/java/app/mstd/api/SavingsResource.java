@@ -1,6 +1,6 @@
-package app.bff.api;
 
-import app.bff.client.SavingsServiceClient;
+package app.mstd.api;
+
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -8,6 +8,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
+
+import app.mstd.client.SavingsServiceClient;
 
 import java.math.BigDecimal;
 import java.util.Map;
