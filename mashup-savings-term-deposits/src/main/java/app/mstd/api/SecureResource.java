@@ -1,4 +1,5 @@
-package app.bff.api;
+
+package app.mstd.api;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;

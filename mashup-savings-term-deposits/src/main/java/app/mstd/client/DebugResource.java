@@ -1,4 +1,5 @@
-package app.bff.debug;
+
+package app.mstd.client;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

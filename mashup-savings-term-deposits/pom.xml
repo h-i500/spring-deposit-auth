@@ -1,6 +1,6 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>app.bff</groupId>
+  <groupId>app.mstd</groupId>
   <artifactId>mashup-savings-term-deposits</artifactId>
   <version>1.0.0</version>
 

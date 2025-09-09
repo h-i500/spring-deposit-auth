@@ -1,4 +1,5 @@
-package app.bff.client;
+
+package app.mstd.client;
 
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.security.identity.SecurityIdentity;

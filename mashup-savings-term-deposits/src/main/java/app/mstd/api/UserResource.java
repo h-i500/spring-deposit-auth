@@ -1,4 +1,5 @@
-package app.bff.api;
+
+package app.mstd.api;
 
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
