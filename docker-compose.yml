@@ -160,6 +160,28 @@ services:
       - "5173"
     networks: [app-net]
 
+  mashup-balance-inquiry-only:
+    build: ./mashup-balance-inquiry-only
+    container_name: mashup-balance-inquiry-only
+    environment:
+      # 下流は直叩き（Kong 経由なし）
+      SAVINGS_BASE_URL: http://savings-service:8081/api
+      TIME_BASE_URL: http://time-deposit-service:8082/api
+      # OIDC クライアント認証（client_credentials）
+      OIDC_ISSUER: http://keycloak:8080/realms/demo-realm
+      OIDC_CLIENT_ID: mashup-client
+      OIDC_CLIENT_SECRET: changeit
+      QUARKUS_OIDC_CLIENT_DISCOVERY_ENABLED: "false"
+      QUARKUS_OIDC_CLIENT_TOKEN_PATH: /protocol/openid-connect/token
+    depends_on:
+      - keycloak
+      - savings-service
+      - time-deposit-service
+    ports:
+      - "9000:9000"   # デバッグ用にホストへ公開
+    networks: [app-net]
+
+
 volumes:
   savings-data:
   timedeposit-data:

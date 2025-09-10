@@ -43,3 +43,41 @@ services:
         expression: (http.path ^= "/app")
         strip_path: false
         preserve_host: false
+
+
+
+  - name: mashup-balance-inquiry-only
+    url: http://mashup-balance-inquiry-only:9000/api/v1/balances
+    routes:
+      - name: balance-inquiry
+        expression: (http.path ^= "/balance-inquiry")
+        strip_path: true
+        preserve_host: false
+        # plugins:
+        #   - name: jwt
+        #     config:
+        #       header_names: ["Authorization"]
+        #       uri_param_names: []
+        #       cookie_names: []
+        #       key_claim_name: "iss"     # iss クレームで照合
+        #       claims_to_verify: ["exp"]
+        #       run_on_preflight: false
+
+# ファイル末尾などに追記（既に consumers があればマージ）
+consumers:
+  - username: keycloak-demo-realm
+    custom_id: keycloak-demo-realm
+    jwt_secrets:
+      - algorithm: RS256
+        key: "http://localhost:8080/realms/demo-realm"   # ← Token の iss と一致
+        secret: "dummy"                                  # RS でも必須のダミー
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqJi3vbv2KI0Xmuc+npzU
+          iBaUU0gITTR+RkO0xjIEJ66RSpfIG62hNVDMPy0BUx+EFNfJtukAy3gRuAoNQLLs
+          ESyyudG9CGMyqtwI0fq5+DLQrwWKQkRT3Y5NN0BmXWZCiqlK1j2jCDhLd7RqREjf
+          pKn9N6cEwNd5awcIc4IwmJEuiaY7LHXsFqfvdimBUIBYXlwZPvKb6ihG1004o18I
+          xKGp8lWNqSFAsI4a7gQJg2QcQUgRKzVgVSSb0unahN1xBniYQbEG2aU+3CQ7Oexo
+          oXnI5mMzveorNyr7ABNBvfsMNf2yXgn/6hIrk/SHbei1g0iscPD8RF6hfTSWP59j
+          hwIDAQAB
+          -----END PUBLIC KEY-----
