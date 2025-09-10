@@ -61,20 +61,13 @@
       "publicClient": false,
       "serviceAccountsEnabled": true,
       "standardFlowEnabled": false,
-      "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
-      "clientAuthenticatorType": "client-secret",
-      "secret": "changeit",
-      "fullScopeAllowed": true,
       "attributes": {
         "oauth2.device.authorization.grant.enabled": "false"
       },
-      "defaultClientScopes": [
-        "basic",
-        "roles",
-        "profile",
-        "email"
-      ]
+      "secret": "changeit",
+      "defaultClientScopes": ["roles","profile","email"],
+      "optionalClientScopes": ["microprofile-jwt","offline_access"]
     },
 
     {
@@ -84,18 +77,13 @@
       "publicClient": true,
       "serviceAccountsEnabled": false,
       "standardFlowEnabled": false,
-      "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
-      "fullScopeAllowed": true,
       "attributes": {
-        "oauth2.device.authorization.grant.enabled": "true"
+        "oauth2.device.authorization.grant.enabled": "true",
+        "pkce.code.challenge.method": "S256"
       },
-      "defaultClientScopes": [
-        "basic",
-        "roles",
-        "profile",
-        "email"
-      ]
+      "defaultClientScopes": ["roles","profile","email"],
+      "optionalClientScopes": ["microprofile-jwt","offline_access"]
     },
 
     {
