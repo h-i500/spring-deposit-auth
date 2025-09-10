@@ -47,20 +47,32 @@ services:
 
 
   # === Balance Inquiry (Quarkus) ===
+  # - name: mashup-balance-inquiry-only
+  #   url: http://mashup-balance-inquiry-only:9000/api/balances
+  #   routes:
+  #     - name: balance-inquiry-route
+  #       expression: (http.path ^= "/balance-inquiry")
+  #       strip_path: true
+  #   # ← サービス直下にプラグインを付与（名前一致が保証できる）
+  #   plugins:
+  #     - name: jwt
+  #       config:
+  #         key_claim_name: iss
+  #         run_on_preflight: false
+  #         # claims_to_verify: ["exp", "nbf"]
+  #         claims_to_verify: ["exp"]   # ← "nbf" は外す
   - name: mashup-balance-inquiry-only
-    url: http://mashup-balance-inquiry-only:9000/api/balances
+    url: http://mashup-balance-inquiry-only:9000/balances   # ← ここを /balances に
     routes:
       - name: balance-inquiry-route
         expression: (http.path ^= "/balance-inquiry")
         strip_path: true
-    # ← サービス直下にプラグインを付与（名前一致が保証できる）
     plugins:
       - name: jwt
         config:
           key_claim_name: iss
           run_on_preflight: false
-          # claims_to_verify: ["exp", "nbf"]
-          claims_to_verify: ["exp"]   # ← "nbf" は外す
+          claims_to_verify: ["exp"]
 
 # （トップレベルの plugins: は削除します。あっても良いですが、下のように service を正しく指す必要があります）
 # plugins:
@@ -77,23 +89,23 @@ consumers:
         key: http://localhost:8080/realms/demo-realm
         rsa_public_key: |
           -----BEGIN PUBLIC KEY-----
-          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8R/+L8AwS/OuWqSJ/MCh
-          UmXMIbyDdfp25X/uq58GFcFk7SkSjdNNynBQdHiw4xtCKqzK3OdBiAhBPrEbK2f4
-          t9roBQBwKCs6t6tSQTxWmCSrBmYQ3wtPqH8nr2ZcS4grxVT8xYOh6oFjxd0KUEUY
-          5cYBJvlKaHCIKZ+st8gMcgBXxfBEMfxWTd4Rbk9Gf43xfF8MWE0xJnCflfM/JK+/
-          JraCG1Xs2itpaZ5xmn06bme6b6/fIMoqOGYC4Y/CM04ae+pO/0j51SF8kcQa5O9Y
-          +Qw4AfC5zei0dZ1h8GoJ0xuvgVWSxfIE4ltHMinmZjv34Mtx3IMrt/dKIqAfmHve
-          ywIDAQAB
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBWs6LcLZF2qjAZN5xuB
+          I3hFS2SUUFr69MLVwVjza3iIWUg5rOmdFjNr2AahvA7A3ytiG9Ncao7IV8yjGRSC
+          i+OLs4Ds30nJWOFRMaORPy7QNBM23bTZrWnbRDKfuQ0bAIooadbQQ3Y0vn6e9Jwd
+          Da525YC2VJRa+kmT1wk9PmvOa6vcnMBe6XwMLqEkwgnFpFRiZBIW+LAC47CZWU/H
+          JdsQa+oiSYMy/ftnbDbyNHGdUYJD/czjj7ABWKd/cKXeY/zD2CoM6GqMkxUoax0y
+          bKPOSXDStPpY+2vrDYeSsWM0RopkXneEDHAeY15RotqyiMcIvmrdkGYB7VQfBjVr
+          4QIDAQAB
           -----END PUBLIC KEY-----
       - algorithm: RS256
         key: http://keycloak:8080/realms/demo-realm
         rsa_public_key: |
           -----BEGIN PUBLIC KEY-----
-          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8R/+L8AwS/OuWqSJ/MCh
-          UmXMIbyDdfp25X/uq58GFcFk7SkSjdNNynBQdHiw4xtCKqzK3OdBiAhBPrEbK2f4
-          t9roBQBwKCs6t6tSQTxWmCSrBmYQ3wtPqH8nr2ZcS4grxVT8xYOh6oFjxd0KUEUY
-          5cYBJvlKaHCIKZ+st8gMcgBXxfBEMfxWTd4Rbk9Gf43xfF8MWE0xJnCflfM/JK+/
-          JraCG1Xs2itpaZ5xmn06bme6b6/fIMoqOGYC4Y/CM04ae+pO/0j51SF8kcQa5O9Y
-          +Qw4AfC5zei0dZ1h8GoJ0xuvgVWSxfIE4ltHMinmZjv34Mtx3IMrt/dKIqAfmHve
-          ywIDAQAB
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBWs6LcLZF2qjAZN5xuB
+          I3hFS2SUUFr69MLVwVjza3iIWUg5rOmdFjNr2AahvA7A3ytiG9Ncao7IV8yjGRSC
+          i+OLs4Ds30nJWOFRMaORPy7QNBM23bTZrWnbRDKfuQ0bAIooadbQQ3Y0vn6e9Jwd
+          Da525YC2VJRa+kmT1wk9PmvOa6vcnMBe6XwMLqEkwgnFpFRiZBIW+LAC47CZWU/H
+          JdsQa+oiSYMy/ftnbDbyNHGdUYJD/czjj7ABWKd/cKXeY/zD2CoM6GqMkxUoax0y
+          bKPOSXDStPpY+2vrDYeSsWM0RopkXneEDHAeY15RotqyiMcIvmrdkGYB7VQfBjVr
+          4QIDAQAB
           -----END PUBLIC KEY-----
