@@ -89,23 +89,23 @@ consumers:
         key: http://localhost:8080/realms/demo-realm
         rsa_public_key: |
           -----BEGIN PUBLIC KEY-----
-          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBWs6LcLZF2qjAZN5xuB
-          I3hFS2SUUFr69MLVwVjza3iIWUg5rOmdFjNr2AahvA7A3ytiG9Ncao7IV8yjGRSC
-          i+OLs4Ds30nJWOFRMaORPy7QNBM23bTZrWnbRDKfuQ0bAIooadbQQ3Y0vn6e9Jwd
-          Da525YC2VJRa+kmT1wk9PmvOa6vcnMBe6XwMLqEkwgnFpFRiZBIW+LAC47CZWU/H
-          JdsQa+oiSYMy/ftnbDbyNHGdUYJD/czjj7ABWKd/cKXeY/zD2CoM6GqMkxUoax0y
-          bKPOSXDStPpY+2vrDYeSsWM0RopkXneEDHAeY15RotqyiMcIvmrdkGYB7VQfBjVr
-          4QIDAQAB
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0V2WX9YeNbXE4I5CNoRt
+          UvqaU+cSbZaa5wKqMtbZ4wZNzoR3v5VrdpfyYawK5EVXm8TjbzQA9tUNN0acm4rv
+          6GkOuEOKVjW5bk/wnAsM0IyaMIlLf5Y53FXwfSxC003GqkJPdUrDY9icYEsGWDOE
+          t+zjRWdN+9aL6+Bj85DKdllaI2fNMvSOQftJ/73iWWPS60UnyxPpdQz/8uca3CK5
+          vy+s3jGHPR6L0ANJAtX8X+xllEpzSetmaRIC47CZkuVj7G+9enTcGtqFpZLu1k4o
+          A7xJwZs1QIwLe51QA7VhJrCIfR+M56VIdDLtP4ylRkXb3B+uNO8mixHeobqHAPEK
+          bwIDAQAB
           -----END PUBLIC KEY-----
       - algorithm: RS256
         key: http://keycloak:8080/realms/demo-realm
         rsa_public_key: |
           -----BEGIN PUBLIC KEY-----
-          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBWs6LcLZF2qjAZN5xuB
-          I3hFS2SUUFr69MLVwVjza3iIWUg5rOmdFjNr2AahvA7A3ytiG9Ncao7IV8yjGRSC
-          i+OLs4Ds30nJWOFRMaORPy7QNBM23bTZrWnbRDKfuQ0bAIooadbQQ3Y0vn6e9Jwd
-          Da525YC2VJRa+kmT1wk9PmvOa6vcnMBe6XwMLqEkwgnFpFRiZBIW+LAC47CZWU/H
-          JdsQa+oiSYMy/ftnbDbyNHGdUYJD/czjj7ABWKd/cKXeY/zD2CoM6GqMkxUoax0y
-          bKPOSXDStPpY+2vrDYeSsWM0RopkXneEDHAeY15RotqyiMcIvmrdkGYB7VQfBjVr
-          4QIDAQAB
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0V2WX9YeNbXE4I5CNoRt
+          UvqaU+cSbZaa5wKqMtbZ4wZNzoR3v5VrdpfyYawK5EVXm8TjbzQA9tUNN0acm4rv
+          6GkOuEOKVjW5bk/wnAsM0IyaMIlLf5Y53FXwfSxC003GqkJPdUrDY9icYEsGWDOE
+          t+zjRWdN+9aL6+Bj85DKdllaI2fNMvSOQftJ/73iWWPS60UnyxPpdQz/8uca3CK5
+          vy+s3jGHPR6L0ANJAtX8X+xllEpzSetmaRIC47CZkuVj7G+9enTcGtqFpZLu1k4o
+          A7xJwZs1QIwLe51QA7VhJrCIfR+M56VIdDLtP4ylRkXb3B+uNO8mixHeobqHAPEK
+          bwIDAQAB
           -----END PUBLIC KEY-----

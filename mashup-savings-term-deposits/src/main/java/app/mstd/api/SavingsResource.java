@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
+import java.util.List;
+import java.util.Map;
+
 @Path("/api/savings")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -25,14 +28,19 @@ public class SavingsResource {
     @RestClient
     SavingsServiceClient savings;
 
-    // 一覧は存在しない設計（UI は後述のとおり修正が必要）
-    // そのため GET /api/savings/accounts は提供しない
-
-    @POST
+    // ★ [検索用] GET /api/savings/accounts?owner=xxx
+    // まずは空配列 [] を返すだけ（Aggregator は空ならそのまま合算して返せます）
+    // @GET
+    // @Path("/accounts")
+    // public Response searchAccounts(@QueryParam("owner") String owner) {
+    //     return Response.ok(java.util.Collections.emptyList()).build();
+    // }
+    @GET
     @Path("/accounts")
-    public Response createAccount(Map<String, Object> req) {
+    public Response listAccounts(@QueryParam("owner") String owner) {
         try {
-            return Response.ok(savings.create(req)).build();
+            List<Map<String, Object>> list = savings.findByOwner(owner);
+            return Response.ok(list).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }
@@ -43,6 +51,16 @@ public class SavingsResource {
     public Response getAccount(@PathParam("id") UUID id) {
         try {
             return Response.ok(savings.get(id)).build();
+        } catch (ClientWebApplicationException e) {
+            return forward(e);
+        }
+    }
+
+    @POST
+    @Path("/accounts")
+    public Response createAccount(Map<String, Object> req) {
+        try {
+            return Response.ok(savings.create(req)).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }

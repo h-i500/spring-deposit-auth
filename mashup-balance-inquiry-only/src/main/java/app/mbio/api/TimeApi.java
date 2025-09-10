@@ -1,4 +1,3 @@
-// mashup-balance-inquiry-only/src/main/java/app/mbio/api/TimeApi.java
 package app.mbio.api;
 
 import java.util.List;
@@ -8,11 +7,18 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import io.quarkus.oidc.client.filter.OidcClientFilter;
 import app.mbio.dto.TimeDepositDto;
 
-// BFF 側の都合に合わせてどちらか：
-//  A) BFF が /api/time-deposits → ここは "/time-deposits"
-//  B) BFF が /api/time-deposits/accounts → ここは "/time-deposits/accounts"
-@Path("/time-deposits")
-@RegisterRestClient(configKey = "time-api")   // ← 重要
+// @Path("/deposits/accounts")              // ← ここを /time-deposits/accounts から訂正
+// @RegisterRestClient(configKey = "time-api")
+// @Produces(MediaType.APPLICATION_JSON)
+// @OidcClientFilter
+// public interface TimeApi {
+//     @GET
+//     List<TimeDepositDto> byOwner(@QueryParam("owner") String owner);
+// }
+
+
+@Path("/deposits/accounts")
+@RegisterRestClient(configKey = "time-api")  // ← ここが time-api であること
 @Produces(MediaType.APPLICATION_JSON)
 @OidcClientFilter
 public interface TimeApi {

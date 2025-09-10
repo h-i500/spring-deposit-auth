@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;   // ← 追加
 
 @Path("/accounts")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -17,14 +18,18 @@ import java.util.UUID;
 @RegisterRestClient(configKey = "savings")
 public interface SavingsServiceClient {
 
-    // POST /accounts  { "owner": "..." }
-    @POST
-    Map<String, Object> create(Map<String, Object> req);
-
     // GET /accounts/{id}
     @GET
     @Path("/{id}")
     Map<String, Object> get(@PathParam("id") UUID id);
+
+    // ★ 追加: GET /accounts?owner=...
+    @GET
+    List<Map<String, Object>> findByOwner(@QueryParam("owner") String owner);
+
+    // POST /accounts  { "owner": "..." }
+    @POST
+    Map<String, Object> create(Map<String, Object> req);
 
     // POST /accounts/{id}/deposit  { "amount": 123.45 }
     @POST

@@ -14,6 +14,9 @@ import app.mstd.client.TimeDepositServiceClient;
 import java.util.Map;
 import java.util.UUID;
 
+import java.util.List;
+import java.util.Map;
+
 @Path("/api/deposits")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,11 +27,20 @@ public class TimeDepositResource {
     @RestClient
     TimeDepositServiceClient td;
 
-    // 定期預金の作成: POST /api/deposits
-    @POST
-    public Response create(Map<String, Object> req) {
+    // ★ [検索用] GET /api/deposits/accounts?owner=xxx
+    // @GET
+    // @Path("/accounts")
+    // public Response searchByOwner(@QueryParam("owner") String owner) {
+    //     return Response.ok(java.util.Collections.emptyList()).build();
+    // }
+    
+    // クラス @Path("/api/deposits") の配下に増設
+    @GET
+    @Path("/accounts")
+    public Response listByOwner(@QueryParam("owner") String owner) {
         try {
-            return Response.ok(td.create(req)).build();
+            List<Map<String, Object>> list = td.findByOwner(owner);
+            return Response.ok(list).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }
@@ -40,6 +52,16 @@ public class TimeDepositResource {
     public Response get(@PathParam("id") UUID id) {
         try {
             return Response.ok(td.get(id)).build();
+        } catch (ClientWebApplicationException e) {
+            return forward(e);
+        }
+    }
+
+    // 定期預金の作成: POST /api/deposits
+    @POST
+    public Response create(Map<String, Object> req) {
+        try {
+            return Response.ok(td.create(req)).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }

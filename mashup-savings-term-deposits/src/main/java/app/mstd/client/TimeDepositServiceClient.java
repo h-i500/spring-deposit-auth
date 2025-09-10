@@ -8,6 +8,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;   // ← 追加
 
 @Path("/deposits") // 下流 time-deposit-service のベースパス
 @Consumes(MediaType.APPLICATION_JSON)
@@ -16,14 +17,19 @@ import java.util.UUID;
 @RegisterRestClient(configKey = "timedeposit")
 public interface TimeDepositServiceClient {
 
-    // POST /deposits
-    @POST
-    Map<String, Object> create(Map<String, Object> req);
 
     // GET /deposits/{id}
     @GET
     @Path("/{id}")
     Map<String, Object> get(@PathParam("id") UUID id);
+
+    // ★ 追加: GET /deposits?owner=...
+    @GET
+    List<Map<String, Object>> findByOwner(@QueryParam("owner") String owner);
+
+    // POST /deposits
+    @POST
+    Map<String, Object> create(Map<String, Object> req);
 
     // ★ POST /deposits/{id}/close?toAccountId=...&at=...
     @POST
