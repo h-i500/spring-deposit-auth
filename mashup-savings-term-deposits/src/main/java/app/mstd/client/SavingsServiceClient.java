@@ -24,8 +24,10 @@ public interface SavingsServiceClient {
     Map<String, Object> get(@PathParam("id") UUID id);
 
     // ★ 追加: GET /accounts?owner=...
+    // @GET
+    // List<Map<String, Object>> findByOwner(@QueryParam("owner") String owner);
     @GET
-    List<Map<String, Object>> findByOwner(@QueryParam("owner") String owner);
+    List<Map<String, Object>> listByOwner(@QueryParam("owner") String owner);
 
     // POST /accounts  { "owner": "..." }
     @POST

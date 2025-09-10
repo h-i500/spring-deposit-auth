@@ -37,10 +37,9 @@ public class TimeDepositResource {
     // クラス @Path("/api/deposits") の配下に増設
     @GET
     @Path("/accounts")
-    public Response listByOwner(@QueryParam("owner") String owner) {
+    public Response list(@QueryParam("owner") String owner) {
         try {
-            List<Map<String, Object>> list = td.findByOwner(owner);
-            return Response.ok(list).build();
+            return Response.ok(td.listByOwner(owner)).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }

@@ -1,4 +1,3 @@
-// mashup-balance-inquiry-only/src/main/java/app/mbio/resource/BalanceResource.java
 package app.mbio.resource;
 
 import jakarta.inject.Inject;
@@ -12,9 +11,11 @@ import app.mbio.dto.BalanceResponse;
 import app.mbio.dto.SavingsDto;
 import app.mbio.dto.TimeDepositDto;
 
-import jakarta.ws.rs.WebApplicationException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Collections;
+
+// ★ 追加：これを import
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @Path("/balances")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,23 +29,17 @@ public class BalanceResource {
         List<SavingsDto> s;
         try {
             s = savings.byOwner(owner);
-        } catch (WebApplicationException ex) {
-            if (ex.getResponse() != null && ex.getResponse().getStatus() == 404) {
-                s = Collections.emptyList();
-            } else {
-                throw ex;
-            }
+        } catch (ClientWebApplicationException ex) {
+            int st = ex.getResponse() != null ? ex.getResponse().getStatus() : 0;
+            if (st == 404 || st == 405) s = Collections.emptyList(); else throw ex;
         }
 
         List<TimeDepositDto> t;
         try {
             t = time.byOwner(owner);
-        } catch (WebApplicationException ex) {
-            if (ex.getResponse() != null && ex.getResponse().getStatus() == 404) {
-                t = Collections.emptyList();
-            } else {
-                throw ex;
-            }
+        } catch (ClientWebApplicationException ex) {
+            int st = ex.getResponse() != null ? ex.getResponse().getStatus() : 0;
+            if (st == 404 || st == 405) t = Collections.emptyList(); else throw ex;
         }
 
         return BalanceResponse.of(owner, s, t);

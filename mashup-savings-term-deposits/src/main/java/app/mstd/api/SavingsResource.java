@@ -35,12 +35,21 @@ public class SavingsResource {
     // public Response searchAccounts(@QueryParam("owner") String owner) {
     //     return Response.ok(java.util.Collections.emptyList()).build();
     // }
+    // @GET
+    // @Path("/accounts")
+    // public Response listAccounts(@QueryParam("owner") String owner) {
+    //     try {
+    //         List<Map<String, Object>> list = savings.findByOwner(owner);
+    //         return Response.ok(list).build();
+    //     } catch (ClientWebApplicationException e) {
+    //         return forward(e);
+    //     }
+    // }
     @GET
     @Path("/accounts")
-    public Response listAccounts(@QueryParam("owner") String owner) {
+    public Response list(@QueryParam("owner") String owner) {
         try {
-            List<Map<String, Object>> list = savings.findByOwner(owner);
-            return Response.ok(list).build();
+            return Response.ok(savings.listByOwner(owner)).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }

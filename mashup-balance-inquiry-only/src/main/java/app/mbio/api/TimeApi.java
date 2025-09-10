@@ -7,18 +7,9 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import io.quarkus.oidc.client.filter.OidcClientFilter;
 import app.mbio.dto.TimeDepositDto;
 
-// @Path("/deposits/accounts")              // ← ここを /time-deposits/accounts から訂正
-// @RegisterRestClient(configKey = "time-api")
-// @Produces(MediaType.APPLICATION_JSON)
-// @OidcClientFilter
-// public interface TimeApi {
-//     @GET
-//     List<TimeDepositDto> byOwner(@QueryParam("owner") String owner);
-// }
-
-
+// mashup-balance-inquiry-only/src/main/java/app/mbio/api/TimeApi.java
 @Path("/deposits/accounts")
-@RegisterRestClient(configKey = "time-api")  // ← ここが time-api であること
+@RegisterRestClient(configKey = "time-api")
 @Produces(MediaType.APPLICATION_JSON)
 @OidcClientFilter
 public interface TimeApi {
