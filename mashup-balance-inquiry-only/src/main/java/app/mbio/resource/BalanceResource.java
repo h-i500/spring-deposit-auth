@@ -8,7 +8,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import app.mbio.api.SavingsApi;
 import app.mbio.api.TimeApi;
 import app.mbio.dto.BalanceResponse;
-import app.mbio.dto.SavingsDto;
+import app.mbio.dto.SavingsAccountDto;
 import app.mbio.dto.TimeDepositDto;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class BalanceResource {
 
     @GET @Path("/{owner}")
     public BalanceResponse byOwner(@PathParam("owner") String owner) {
-        List<SavingsDto> s;
+        List<SavingsAccountDto> s;
         try {
             s = savings.byOwner(owner);
         } catch (ClientWebApplicationException ex) {

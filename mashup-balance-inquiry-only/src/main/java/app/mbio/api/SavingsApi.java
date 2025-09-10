@@ -6,7 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import io.quarkus.oidc.client.filter.OidcClientFilter;
-import app.mbio.dto.SavingsDto;
+import app.mbio.dto.SavingsAccountDto;
 
 // mashup-balance-inquiry-only/src/main/java/app/mbio/api/SavingsApi.java
 @Path("/savings/accounts")
@@ -15,6 +15,7 @@ import app.mbio.dto.SavingsDto;
 @OidcClientFilter
 public interface SavingsApi {
     @GET
-    List<SavingsDto> byOwner(@QueryParam("owner") String owner);
+    // List<SavingsDto> byOwner(@QueryParam("owner") String owner);
+    List<SavingsAccountDto> byOwner(@QueryParam("ownerKey") String ownerKey);
 }
 

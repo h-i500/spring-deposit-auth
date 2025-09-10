@@ -4,10 +4,10 @@ import java.util.List;
 
 public record BalanceResponse(
     String owner,
-    List<SavingsDto> savings,
+    List<SavingsAccountDto> savings,
     List<TimeDepositDto> timeDeposits
 ) {
-    public static BalanceResponse of(String owner, List<SavingsDto> s, List<TimeDepositDto> t) {
+    public static BalanceResponse of(String owner, List<SavingsAccountDto> s, List<TimeDepositDto> t) {
         return new BalanceResponse(owner, s, t);
     }
 }

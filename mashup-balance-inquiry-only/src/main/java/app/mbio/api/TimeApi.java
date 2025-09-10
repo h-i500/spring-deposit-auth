@@ -14,5 +14,6 @@ import app.mbio.dto.TimeDepositDto;
 @OidcClientFilter
 public interface TimeApi {
     @GET
-    List<TimeDepositDto> byOwner(@QueryParam("owner") String owner);
+    // List<TimeDepositDto> byOwner(@QueryParam("owner") String owner);
+    List<TimeDepositDto> byOwner(@QueryParam("ownerKey") String ownerKey);
 }

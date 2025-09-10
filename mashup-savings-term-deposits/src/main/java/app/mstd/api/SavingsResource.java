@@ -47,9 +47,9 @@ public class SavingsResource {
     // }
     @GET
     @Path("/accounts")
-    public Response list(@QueryParam("owner") String owner) {
+    public Response list(@QueryParam("ownerKey") String ownerKey) {
         try {
-            return Response.ok(savings.listByOwner(owner)).build();
+            return Response.ok(savings.listByOwner(ownerKey)).build();
         } catch (ClientWebApplicationException e) {
             return forward(e);
         }
