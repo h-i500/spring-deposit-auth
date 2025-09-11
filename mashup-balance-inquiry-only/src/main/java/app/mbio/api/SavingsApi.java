@@ -1,4 +1,3 @@
-// mashup-balance-inquiry-only/src/main/java/app/mbio/api/SavingsApi.java
 package app.mbio.api;
 
 import java.util.List;
@@ -8,20 +7,11 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import io.quarkus.oidc.client.filter.OidcClientFilter;
 import app.mbio.dto.SavingsAccountDto;
 
-// mashup-balance-inquiry-only/src/main/java/app/mbio/api/SavingsApi.java
-@Path("/savings/accounts")
-@RegisterRestClient(configKey = "savings-api")
+@Path("/api/savings")
+@RegisterRestClient(configKey = "mstd")   // ← MSTD に向ける
 @Produces(MediaType.APPLICATION_JSON)
 @OidcClientFilter
 public interface SavingsApi {
-    // @GET
-    // // List<SavingsDto> byOwner(@QueryParam("owner") String owner);
-    // List<SavingsAccountDto> byOwner(@QueryParam("ownerKey") String ownerKey);
-
-    // @POST
-    @GET
-    // @Path("/accounts")
-    List<SavingsAccountDto> byOwner(String owner);
-    public static record OwnerKeyReq(String ownerKey) {}
+    @GET @Path("/accounts")
+    List<SavingsAccountDto> byOwner(@QueryParam("owner") String owner);
 }
-

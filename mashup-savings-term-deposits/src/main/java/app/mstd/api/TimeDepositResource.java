@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
+import app.mstd.client.SavingsServiceClient;
 import app.mstd.client.TimeDepositServiceClient;
 
 import java.util.Map;
@@ -21,6 +22,8 @@ import java.util.UUID;
 
 import java.util.List;
 import java.util.Map;
+
+
 
 @Path("/api/deposits")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -85,38 +88,37 @@ public class TimeDepositResource {
 
 
     // ★ === ここから、検索用 ===
-    private static final String TIME_DEPOSIT_BASE = "http://time-deposit-service:8082";
-
-    @Inject WebClient webClient;
-    @Inject SecurityIdentity identity;
-
-    public static record OwnerReq(String owner) {}
-    public static record OwnerKeyReq(String ownerKey) {}
+    @Inject
+    @RestClient
+    TimeDepositServiceClient timeDepositClient; // ← インスタンスを注入
 
     @GET
     @Path("/accounts")
-    public Uni<Response> accounts(OwnerKeyReq req) {
-        String owner = req == null ? "" : req.ownerKey(); // 下流が owner を期待
-        JsonObject body = new JsonObject().put("owner", owner);
-
-        return webClient.postAbs(TIME_DEPOSIT_BASE + "/accounts")
-            .putHeader("Authorization", bearer())
-            .putHeader("Accept", MediaType.APPLICATION_JSON)
-            .putHeader("Content-Type", MediaType.APPLICATION_JSON)
-            .sendJsonObject(body)
-            .onItem().transform(resp -> Response.status(resp.statusCode())
-                .entity(resp.bodyAsString())
-                .type(MediaType.APPLICATION_JSON)
-                .build());
-    }
-
-    private String bearer() {
-        AccessTokenCredential cred = identity.getCredential(AccessTokenCredential.class);
-        if (cred == null || cred.getToken() == null || cred.getToken().isBlank()) {
-            throw new WebApplicationException("No access token", Response.Status.UNAUTHORIZED);
+    public List<Map<String, Object>> accounts(@QueryParam("owner") String owner) {
+        if (owner == null || owner.isBlank()) {
+            throw new WebApplicationException("query param 'owner' is required", 400);
         }
-        return "Bearer " + cred.getToken();
+        return timeDepositClient.listByOwner(owner);
     }
+
+    // @GET
+    // @Path("/accounts")
+    // public Uni<Response> accounts(OwnerKeyReq req) {
+    //     String owner = req == null ? "" : req.ownerKey(); // 下流が owner を期待
+    //     JsonObject body = new JsonObject().put("owner", owner);
+
+    //     return webClient.postAbs(TIME_DEPOSIT_BASE + "/accounts")
+    //         .putHeader("Authorization", bearer())
+    //         .putHeader("Accept", MediaType.APPLICATION_JSON)
+    //         .putHeader("Content-Type", MediaType.APPLICATION_JSON)
+    //         .sendJsonObject(body)
+    //         .onItem().transform(resp -> Response.status(resp.statusCode())
+    //             .entity(resp.bodyAsString())
+    //             .type(MediaType.APPLICATION_JSON)
+    //             .build());
+    // }
+
+
 
 
 

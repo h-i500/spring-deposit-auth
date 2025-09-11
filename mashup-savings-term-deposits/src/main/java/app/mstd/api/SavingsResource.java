@@ -23,6 +23,8 @@ import java.util.UUID;
 import java.util.List;
 import java.util.Map;
 
+import app.mstd.client.SavingsServiceClient;
+
 @Path("/api/savings")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -88,37 +90,16 @@ public class SavingsResource {
 
 
     // ★ === ここから、検索用 ===
-    static final String SAVINGS_BASE = "http://savings-service:8081";
-
-    @Inject WebClient webClient;
-    @Inject SecurityIdentity identity;
-
-    public static record OwnerReq(String owner) {}
-    public static record OwnerKeyReq(String ownerKey) {}
+    @Inject
+    @RestClient
+    SavingsServiceClient savingsClient; // ← インスタンスを注入
 
     @GET
     @Path("/accounts")
-    public Uni<Response> accounts(OwnerKeyReq req) {
-        String owner = req == null ? "" : req.ownerKey(); // 下流が owner を期待
-        JsonObject body = new JsonObject().put("owner", owner);
-
-        return webClient.postAbs(SAVINGS_BASE + "/accounts")
-            .putHeader("Authorization", bearer())
-            .putHeader("Accept", MediaType.APPLICATION_JSON)
-            .putHeader("Content-Type", MediaType.APPLICATION_JSON)
-            .sendJsonObject(body)
-            .onItem().transform(resp -> Response.status(resp.statusCode())
-                .entity(resp.bodyAsString())
-                .type(MediaType.APPLICATION_JSON)
-                .build());
-    }
-
-    private String bearer() {
-        AccessTokenCredential cred = identity.getCredential(AccessTokenCredential.class);
-        if (cred == null || cred.getToken() == null || cred.getToken().isBlank()) {
-            throw new WebApplicationException("No access token", Response.Status.UNAUTHORIZED);
+    public List<Map<String, Object>> accounts(@QueryParam("owner") String owner) {
+        if (owner == null || owner.isBlank()) {
+            throw new WebApplicationException("query param 'owner' is required", 400);
         }
-        return "Bearer " + cred.getToken();
+        return savingsClient.listByOwner(owner);
     }
-
 }
