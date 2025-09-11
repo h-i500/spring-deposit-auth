@@ -8,4 +8,5 @@
 ・外為機能を付ける。
 ・普通預金の、関数名を適切な形に変える。
 ・mstdのsavingとtimeでエンドポイントの名前法則対比するとおかしい。savingとtiemならわかるが、savingとdepositになっている。
+・テストコードを書く
 ・OWASP top 10対応

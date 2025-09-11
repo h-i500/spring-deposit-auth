@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REALM_BASE="http://localhost:8080/realms/demo-realm"
+# REALM_BASE="http://localhost:8080/realms/demo-realm"
+REALM_BASE="http://keycloak:8080/realms/demo-realm"
 CLIENT_ID="mashup-cli-public"
 
 # PKCE (S256)

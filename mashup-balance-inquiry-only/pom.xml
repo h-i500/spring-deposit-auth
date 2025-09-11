@@ -51,13 +51,19 @@
         </dependency>
 
         <!-- OIDC Client + REST Client用フィルタ -->
-        <dependency>
+        <!-- <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-oidc-client</artifactId>
-        </dependency>
-        <dependency>
+        </dependency> -->
+        <!-- <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client-oidc-filter</artifactId>
+        </dependency> -->
+        
+        <!-- ユーザトークン伝播だけ使う -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-oidc-token-propagation</artifactId>
         </dependency>
 
         <!-- OpenAPI (任意) -->
@@ -70,6 +76,7 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-oidc</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>

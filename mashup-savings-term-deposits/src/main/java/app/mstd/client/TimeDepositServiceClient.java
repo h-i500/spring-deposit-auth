@@ -35,6 +35,6 @@ public interface TimeDepositServiceClient {
     //     return findByOwner(Map.of("owner", owner));
     // }
     @GET
-    @Path("/accounts")
+    // @Path("/accounts")
     List<Map<String, Object>> listByOwner(@QueryParam("owner") String owner);
 }
