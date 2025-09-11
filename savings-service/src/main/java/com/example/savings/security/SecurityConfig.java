@@ -43,7 +43,9 @@ public class SecurityConfig {
         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 
         // Controller無注釈の検索APIも read ロール必須に
-        .requestMatchers(HttpMethod.GET, "/api/accounts/search").hasRole("read")
+        // .requestMatchers(HttpMethod.GET, "/api/accounts/search").hasRole("read")
+        // まずは認証のみ
+        .requestMatchers(HttpMethod.GET, "/accounts").authenticated() // まずは認証のみ
 
         // それ以外は認証必須（/accounts は @PreAuthorize が二重で守る）
         .anyRequest().authenticated()

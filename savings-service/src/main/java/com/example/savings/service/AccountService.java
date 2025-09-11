@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,5 +43,10 @@ public class AccountService {
         if (a.getBalance().compareTo(amount) < 0) throw new IllegalStateException("insufficient funds");
         a.setBalance(a.getBalance().subtract(amount));
         return a;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Account> findByOwner(String owner) {
+        return repo.findByOwner(owner);
     }
 }

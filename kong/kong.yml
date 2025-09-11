@@ -43,3 +43,63 @@ services:
         expression: (http.path ^= "/app")
         strip_path: false
         preserve_host: false
+
+
+
+  # === Balance Inquiry (Quarkus) ===
+  # - name: mashup-balance-inquiry-only
+  #   url: http://mashup-balance-inquiry-only:9000/api/balances
+  #   routes:
+  #     - name: balance-inquiry-route
+  #       expression: (http.path ^= "/balance-inquiry")
+  #       strip_path: true
+  #   # ← サービス直下にプラグインを付与（名前一致が保証できる）
+  #   plugins:
+  #     - name: jwt
+  #       config:
+  #         key_claim_name: iss
+  #         run_on_preflight: false
+  #         # claims_to_verify: ["exp", "nbf"]
+  #         claims_to_verify: ["exp"]   # ← "nbf" は外す
+  - name: mashup-balance-inquiry-only
+    url: http://mashup-balance-inquiry-only:9000/balances   # ← ここを /balances に
+    routes:
+      - name: balance-inquiry-route
+        expression: (http.path ^= "/balance-inquiry")
+        strip_path: true
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: iss
+          run_on_preflight: false
+          claims_to_verify: ["exp"]
+
+# Consumers はそのままでOKだが、rsa_public_key は「公開鍵（BEGIN PUBLIC KEY）」にする
+consumers:
+  - username: keycloak
+    jwt_secrets:      
+      - algorithm: RS256
+        key: http://keycloak:8080/realms/demo-realm
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkrNto9BAC/YylcoGWq3
+          mIcFa4M6XFQ6xZ7DrBXLxnF7iTxyqOGBNc0oxhmzIpfxXonesXqhA0H348aukCEK
+          J2OLrwE3b+VGBHjMygyi4/0N68NpVucFT6F5xh6DjlPJzg+kyzK4xXcH9vm1Jp3p
+          7hawDgwu3klSSrSr3ijle5f7Jj9flWjtCTPYf/3EJ5yw62XA1B8v6kkL/zaH7syZ
+          jbqO1vtPbjJf24LbySPimNY+0L6iFBuDHcJkZYaHvwFfu7Op6XMNkVqn9jczj+mY
+          kXfFmfAARcZgFwH2LjXMaKvnVft6k3XX5+5CGu45+UCLoqzBesqjeBhG9TMUlF/D
+          1wIDAQAB
+          -----END PUBLIC KEY-----
+      # 外部から取得したトークン（iss が localhost の場合）
+      # - algorithm: RS256
+      #   key: http://localhost:8080/realms/demo-realm
+      #   rsa_public_key: |
+      #     -----BEGIN PUBLIC KEY-----
+      #     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0V2WX9YeNbXE4I5CNoRt
+      #     UvqaU+cSbZaa5wKqMtbZ4wZNzoR3v5VrdpfyYawK5EVXm8TjbzQA9tUNN0acm4rv
+      #     6GkOuEOKVjW5bk/wnAsM0IyaMIlLf5Y53FXwfSxC003GqkJPdUrDY9icYEsGWDOE
+      #     t+zjRWdN+9aL6+Bj85DKdllaI2fNMvSOQftJ/73iWWPS60UnyxPpdQz/8uca3CK5
+      #     vy+s3jGHPR6L0ANJAtX8X+xllEpzSetmaRIC47CZkuVj7G+9enTcGtqFpZLu1k4o
+      #     A7xJwZs1QIwLe51QA7VhJrCIfR+M56VIdDLtP4ylRkXb3B+uNO8mixHeobqHAPEK
+      #     bwIDAQAB
+      #     -----END PUBLIC KEY-----
