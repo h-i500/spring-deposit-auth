@@ -20,16 +20,6 @@ public interface SavingsServiceClient {
     @Path("/{id}")
     Map<String, Object> get(@PathParam("id") UUID id);
 
-    // ★ 下流の検索は POST /accounts に JSON ボディで条件を渡す
-    @POST
-    List<Map<String, Object>> findByOwner(Map<String, Object> req);
-
-    // ★ 外向け GET をこのデフォルトメソッドで POST に変換
-    default List<Map<String, Object>> listByOwner(String owner) {
-        // 下流が "ownerKey" を期待するならキー名を ownerKey に変更してください
-        return findByOwner(Map.of("owner", owner));
-    }
-
     // POST /accounts …（口座作成）
     @POST
     @Path("") // 明示（省略可）
@@ -40,4 +30,17 @@ public interface SavingsServiceClient {
 
     @POST @Path("/{id}/withdraw")
     Map<String, Object> withdraw(@PathParam("id") UUID id, Map<String, BigDecimal> req);
+
+    // ★ （デバックで利用）下流の検索は POST /accounts に JSON ボディで条件を渡す
+    // @POST
+    // List<Map<String, Object>> findByOwner(Map<String, Object> req);
+    // // ★ 外向け GET をこのデフォルトメソッドで POST に変換
+    // default List<Map<String, Object>> listByOwner(String owner) {
+    //     // 下流が "ownerKey" を期待するならキー名を ownerKey に変更してください
+    //     return findByOwner(Map.of("owner", owner));
+    // }
+
+    // ownerで検索
+    @GET
+    List<Map<String, Object>> listByOwner(@QueryParam("owner") String owner);
 }

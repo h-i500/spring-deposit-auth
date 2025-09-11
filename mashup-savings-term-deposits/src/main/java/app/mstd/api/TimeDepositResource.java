@@ -88,16 +88,13 @@ public class TimeDepositResource {
 
 
     // ★ === ここから、検索用 ===
-    @Inject
-    @RestClient
-    TimeDepositServiceClient timeDepositClient; // ← インスタンスを注入
-
+    // 検索：GET /api/deposits/accounts?owner=...
     @GET
     @Path("/accounts")
     public List<Map<String, Object>> accounts(@QueryParam("owner") String owner) {
         if (owner == null || owner.isBlank()) {
             throw new WebApplicationException("query param 'owner' is required", 400);
         }
-        return timeDepositClient.listByOwner(owner);  // ← 中で POST に変換
+        return td.listByOwner(owner); // 下流の GET /deposits/accounts に委譲
     }
 }

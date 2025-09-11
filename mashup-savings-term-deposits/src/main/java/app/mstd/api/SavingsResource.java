@@ -15,6 +15,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 import app.mstd.client.SavingsServiceClient;
+import app.mstd.service.AccountQueryService;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -91,8 +92,7 @@ public class SavingsResource {
 
     // ★ === ここから、検索用 ===
     @Inject
-    @RestClient
-    SavingsServiceClient savingsClient; // ← インスタンスを注入
+    AccountQueryService accountQuery; // ← Service 経由（直で RestClient でもOK）
 
     @GET
     @Path("/accounts")
@@ -100,6 +100,6 @@ public class SavingsResource {
         if (owner == null || owner.isBlank()) {
             throw new WebApplicationException("query param 'owner' is required", 400);
         }
-        return savingsClient.listByOwner(owner); // ← 中で POST に変換される
+        return accountQuery.listByOwner(owner);
     }
 }
