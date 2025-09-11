@@ -14,8 +14,14 @@ import app.mbio.dto.SavingsAccountDto;
 @Produces(MediaType.APPLICATION_JSON)
 @OidcClientFilter
 public interface SavingsApi {
+    // @GET
+    // // List<SavingsDto> byOwner(@QueryParam("owner") String owner);
+    // List<SavingsAccountDto> byOwner(@QueryParam("ownerKey") String ownerKey);
+
+    // @POST
     @GET
-    // List<SavingsDto> byOwner(@QueryParam("owner") String owner);
-    List<SavingsAccountDto> byOwner(@QueryParam("ownerKey") String ownerKey);
+    // @Path("/accounts")
+    List<SavingsAccountDto> byOwner(String owner);
+    public static record OwnerKeyReq(String ownerKey) {}
 }
 

@@ -1,7 +1,12 @@
 
 package app.mstd.api;
 
+import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
+import io.vertx.mutiny.ext.web.client.WebClient;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -27,23 +32,7 @@ public class TimeDepositResource {
     @RestClient
     TimeDepositServiceClient td;
 
-    // ★ [検索用] GET /api/deposits/accounts?owner=xxx
-    // @GET
-    // @Path("/accounts")
-    // public Response searchByOwner(@QueryParam("owner") String owner) {
-    //     return Response.ok(java.util.Collections.emptyList()).build();
-    // }
     
-    // クラス @Path("/api/deposits") の配下に増設
-    @GET
-    @Path("/accounts")
-    public Response list(@QueryParam("ownerKey") String ownerKey) {
-        try {
-            return Response.ok(td.listByOwner(ownerKey)).build();
-        } catch (ClientWebApplicationException e) {
-            return forward(e);
-        }
-    }
 
     // 定期預金の取得: GET /api/deposits/{id}
     @GET
@@ -93,4 +82,42 @@ public class TimeDepositResource {
         }
         return Response.status(resp.getStatus()).entity(entity).build();
     }
+
+
+    // ★ === ここから、検索用 ===
+    private static final String TIME_DEPOSIT_BASE = "http://time-deposit-service:8082";
+
+    @Inject WebClient webClient;
+    @Inject SecurityIdentity identity;
+
+    public static record OwnerReq(String owner) {}
+    public static record OwnerKeyReq(String ownerKey) {}
+
+    @GET
+    @Path("/accounts")
+    public Uni<Response> accounts(OwnerKeyReq req) {
+        String owner = req == null ? "" : req.ownerKey(); // 下流が owner を期待
+        JsonObject body = new JsonObject().put("owner", owner);
+
+        return webClient.postAbs(TIME_DEPOSIT_BASE + "/accounts")
+            .putHeader("Authorization", bearer())
+            .putHeader("Accept", MediaType.APPLICATION_JSON)
+            .putHeader("Content-Type", MediaType.APPLICATION_JSON)
+            .sendJsonObject(body)
+            .onItem().transform(resp -> Response.status(resp.statusCode())
+                .entity(resp.bodyAsString())
+                .type(MediaType.APPLICATION_JSON)
+                .build());
+    }
+
+    private String bearer() {
+        AccessTokenCredential cred = identity.getCredential(AccessTokenCredential.class);
+        if (cred == null || cred.getToken() == null || cred.getToken().isBlank()) {
+            throw new WebApplicationException("No access token", Response.Status.UNAUTHORIZED);
+        }
+        return "Bearer " + cred.getToken();
+    }
+
+
+
 }

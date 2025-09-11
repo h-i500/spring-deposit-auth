@@ -1,7 +1,12 @@
 
 package app.mstd.api;
 
+import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
+import io.vertx.mutiny.ext.web.client.WebClient;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -27,33 +32,6 @@ public class SavingsResource {
     @Inject
     @RestClient
     SavingsServiceClient savings;
-
-    // ★ [検索用] GET /api/savings/accounts?owner=xxx
-    // まずは空配列 [] を返すだけ（Aggregator は空ならそのまま合算して返せます）
-    // @GET
-    // @Path("/accounts")
-    // public Response searchAccounts(@QueryParam("owner") String owner) {
-    //     return Response.ok(java.util.Collections.emptyList()).build();
-    // }
-    // @GET
-    // @Path("/accounts")
-    // public Response listAccounts(@QueryParam("owner") String owner) {
-    //     try {
-    //         List<Map<String, Object>> list = savings.findByOwner(owner);
-    //         return Response.ok(list).build();
-    //     } catch (ClientWebApplicationException e) {
-    //         return forward(e);
-    //     }
-    // }
-    @GET
-    @Path("/accounts")
-    public Response list(@QueryParam("ownerKey") String ownerKey) {
-        try {
-            return Response.ok(savings.listByOwner(ownerKey)).build();
-        } catch (ClientWebApplicationException e) {
-            return forward(e);
-        }
-    }
 
     @GET
     @Path("/accounts/{id}")
@@ -106,4 +84,41 @@ public class SavingsResource {
         }
         return Response.status(resp.getStatus()).entity(entity).build();
     }
+
+
+
+    // ★ === ここから、検索用 ===
+    static final String SAVINGS_BASE = "http://savings-service:8081";
+
+    @Inject WebClient webClient;
+    @Inject SecurityIdentity identity;
+
+    public static record OwnerReq(String owner) {}
+    public static record OwnerKeyReq(String ownerKey) {}
+
+    @GET
+    @Path("/accounts")
+    public Uni<Response> accounts(OwnerKeyReq req) {
+        String owner = req == null ? "" : req.ownerKey(); // 下流が owner を期待
+        JsonObject body = new JsonObject().put("owner", owner);
+
+        return webClient.postAbs(SAVINGS_BASE + "/accounts")
+            .putHeader("Authorization", bearer())
+            .putHeader("Accept", MediaType.APPLICATION_JSON)
+            .putHeader("Content-Type", MediaType.APPLICATION_JSON)
+            .sendJsonObject(body)
+            .onItem().transform(resp -> Response.status(resp.statusCode())
+                .entity(resp.bodyAsString())
+                .type(MediaType.APPLICATION_JSON)
+                .build());
+    }
+
+    private String bearer() {
+        AccessTokenCredential cred = identity.getCredential(AccessTokenCredential.class);
+        if (cred == null || cred.getToken() == null || cred.getToken().isBlank()) {
+            throw new WebApplicationException("No access token", Response.Status.UNAUTHORIZED);
+        }
+        return "Bearer " + cred.getToken();
+    }
+
 }
