@@ -98,28 +98,6 @@ public class TimeDepositResource {
         if (owner == null || owner.isBlank()) {
             throw new WebApplicationException("query param 'owner' is required", 400);
         }
-        return timeDepositClient.listByOwner(owner);
+        return timeDepositClient.listByOwner(owner);  // ← 中で POST に変換
     }
-
-    // @GET
-    // @Path("/accounts")
-    // public Uni<Response> accounts(OwnerKeyReq req) {
-    //     String owner = req == null ? "" : req.ownerKey(); // 下流が owner を期待
-    //     JsonObject body = new JsonObject().put("owner", owner);
-
-    //     return webClient.postAbs(TIME_DEPOSIT_BASE + "/accounts")
-    //         .putHeader("Authorization", bearer())
-    //         .putHeader("Accept", MediaType.APPLICATION_JSON)
-    //         .putHeader("Content-Type", MediaType.APPLICATION_JSON)
-    //         .sendJsonObject(body)
-    //         .onItem().transform(resp -> Response.status(resp.statusCode())
-    //             .entity(resp.bodyAsString())
-    //             .type(MediaType.APPLICATION_JSON)
-    //             .build());
-    // }
-
-
-
-
-
 }

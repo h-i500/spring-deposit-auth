@@ -100,6 +100,6 @@ public class SavingsResource {
         if (owner == null || owner.isBlank()) {
             throw new WebApplicationException("query param 'owner' is required", 400);
         }
-        return savingsClient.listByOwner(owner);
+        return savingsClient.listByOwner(owner); // ← 中で POST に変換される
     }
 }
