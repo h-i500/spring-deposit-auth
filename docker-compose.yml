@@ -178,7 +178,7 @@ services:
       - savings-service
       - time-deposit-service
     ports:
-      - "9000:9000"   # デバッグ用にホストへ公開
+      - "8180:8180"   # デバッグ用にホストへ公開
     networks: [app-net]
 
 

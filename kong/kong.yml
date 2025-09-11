@@ -45,24 +45,8 @@ services:
         preserve_host: false
 
 
-
-  # === Balance Inquiry (Quarkus) ===
-  # - name: mashup-balance-inquiry-only
-  #   url: http://mashup-balance-inquiry-only:9000/api/balances
-  #   routes:
-  #     - name: balance-inquiry-route
-  #       expression: (http.path ^= "/balance-inquiry")
-  #       strip_path: true
-  #   # ← サービス直下にプラグインを付与（名前一致が保証できる）
-  #   plugins:
-  #     - name: jwt
-  #       config:
-  #         key_claim_name: iss
-  #         run_on_preflight: false
-  #         # claims_to_verify: ["exp", "nbf"]
-  #         claims_to_verify: ["exp"]   # ← "nbf" は外す
   - name: mashup-balance-inquiry-only
-    url: http://mashup-balance-inquiry-only:9000/balances   # ← ここを /balances に
+    url: http://mashup-balance-inquiry-only:8180/balances   # ← ここを /balances に
     routes:
       - name: balance-inquiry-route
         expression: (http.path ^= "/balance-inquiry")
@@ -82,13 +66,13 @@ consumers:
         key: http://keycloak:8080/realms/demo-realm
         rsa_public_key: |
           -----BEGIN PUBLIC KEY-----
-          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkrNto9BAC/YylcoGWq3
-          mIcFa4M6XFQ6xZ7DrBXLxnF7iTxyqOGBNc0oxhmzIpfxXonesXqhA0H348aukCEK
-          J2OLrwE3b+VGBHjMygyi4/0N68NpVucFT6F5xh6DjlPJzg+kyzK4xXcH9vm1Jp3p
-          7hawDgwu3klSSrSr3ijle5f7Jj9flWjtCTPYf/3EJ5yw62XA1B8v6kkL/zaH7syZ
-          jbqO1vtPbjJf24LbySPimNY+0L6iFBuDHcJkZYaHvwFfu7Op6XMNkVqn9jczj+mY
-          kXfFmfAARcZgFwH2LjXMaKvnVft6k3XX5+5CGu45+UCLoqzBesqjeBhG9TMUlF/D
-          1wIDAQAB
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkEMgQsyXxZYz7zT7Xrai
+          MunUBVP9DoGL+/ZCmx77GqCiktAU/xF6ssiBOXRAGKcWsj4RvIPSRFGHowKHnrOG
+          NF0turFMV/TgctnKMrVQFbzf1fgVh4dhprxaw8km0nPhb6DOENQaKBcPU5Jvb0JM
+          m8tU7i5e6ijSrpUgoZ8PXBSdTiJfIamKiO30m0wWgd8AJvjM2Sg/a7ni+z+OiQ48
+          uETsVlbpQi++Pe4w1KE5NqZmCILTOOlHZhETnEB9iISPPyhKAJrKadzwvyju2Rc4
+          YTvjBLx2aPdv+BVWLXIA8gb+nQPzvfkZbXFRejpfeLFxnzVJuupaFltOxzru904j
+          cwIDAQAB
           -----END PUBLIC KEY-----
       # 外部から取得したトークン（iss が localhost の場合）
       # - algorithm: RS256

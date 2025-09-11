@@ -26,14 +26,7 @@ public interface TimeDepositServiceClient {
                               @QueryParam("at") String at);
 
                               
-    // // ★ 検索は POST /deposits
-    // @POST
-    // List<Map<String, Object>> findByOwner(Map<String, Object> req);
-    // // ★ 外向け GET から POST へ変換
-    // default List<Map<String, Object>> listByOwner(String owner) {
-    //     // 必要に応じて "ownerKey" に変更
-    //     return findByOwner(Map.of("owner", owner));
-    // }
+    // 検索
     @GET
     // @Path("/accounts")
     List<Map<String, Object>> listByOwner(@QueryParam("owner") String owner);

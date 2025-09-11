@@ -7,5 +7,5 @@ RUN mvn -B -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /build/target/quarkus-app/ ./quarkus-app/
-EXPOSE 9000
+EXPOSE 8180
 ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/quarkus-app/quarkus-run.jar"]

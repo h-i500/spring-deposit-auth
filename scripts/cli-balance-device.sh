@@ -51,13 +51,6 @@ printf '%s' "$ACCESS_TOKEN" > .access_token
 echo "export ACCESS_TOKEN=$(cat .access_token)" > .env.tokens
 echo "[info] wrote .access_token / .env.tokens (source .env.tokens で再利用可)"
 
-# JWT から preferred_username を取り owner にする（OWNER 環境変数で上書き可）
-# if [[ -z "${OWNER:-}" ]]; then
-#   PAYLOAD=$(cut -d. -f2 <<< "$ACCESS_TOKEN")
-#   # base64url デコード（パディング対応）
-#   PAD=$(( (4 - ${#PAYLOAD} % 4) % 4 )); PADSTR=$(printf '=%.0s' $(seq 1 $PAD))
-#   OWNER=$(printf '%s' "$PAYLOAD$PADSTR" | tr '_-' '/+' | base64 -d 2>/dev/null | jq -r .preferred_username)
-# fi
 
 OWNER_ARG="${1:-}"
 if [[ -n "$OWNER_ARG" ]]; then
