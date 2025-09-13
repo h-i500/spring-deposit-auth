@@ -107,6 +107,33 @@
         "profile",
         "email"
       ]
+    },
+    {
+      "clientId": "mashup-cli-ropc",
+      "name": "mashup-cli-ropc",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "changeit", 
+      "fullScopeAllowed": true,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "oauth2.device.authorization.grant.enabled": "false"
+      },
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "microprofile-jwt",
+        "offline_access"
+      ]
     }
   ],
 

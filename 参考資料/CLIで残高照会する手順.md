@@ -1,5 +1,7 @@
 
 
+# ブラウザでの承認を挟む方法
+
 1. keycloakとkongを起動
 以下コマンドで全体を起動
 ```
@@ -13,6 +15,7 @@ $ docker compose down -v
 2. PUBLIC KEY生成
 以下コマンドを実行。
 ```
+$ chmod +x scripts/key-create.sh
 $ scripts/key-create.sh
 ```
 プロジェクトトップにkc.pubが生成されます。
@@ -43,6 +46,7 @@ $ docker compose restart kong
 4. シェル実行
 以下シェルを実行する。認証情報を得ながら、残高照会をします。
 ```
+$ chmod +x scripts/cli-balance-device.sh
 $ scripts/cli-balance-device.sh testuser
 開いて認可してください:
   http://keycloak:8080/realms/demo-realm/device?user_code=XGJV-MGMY
@@ -79,3 +83,22 @@ http://keycloak:8080/realms/demo-realm/device?user_code=XGJV-MGMY
 ```
 $ scripts/cli-balance-device.sh testuser
 ```
+
+
+# 承認手続きも含めてCLIで実施する方法
+
+1. オンライン専用
+ACCESS_TOKEN の有効期限（既定 900 秒）内に都度取得して使う形。
+以下コマンドを実行する。
+```
+$ chmod +x scripts/cli-balance-ropc.sh
+$ scripts/cli-balance-ropc.sh testuser password ppXevOmtsc7nqFq0THeurHflbLdUsq0N
+```
+
+2. 長期無人運用したい（オフライン token も取得）
+すでに案内した手順Bのとおり、mashup-cli-ropc クライアントに offline_access クライアントスコープを関連付けたうえで、以下を実行
+```
+$ OFFLINE=1 scripts/cli-balance-ropc.sh testuser password <CLIENT_SECRET>
+```
+
+
