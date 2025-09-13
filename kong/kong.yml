@@ -66,13 +66,13 @@ consumers:
         key: http://keycloak:8080/realms/demo-realm
         rsa_public_key: |
           -----BEGIN PUBLIC KEY-----
-          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz1iut6O7Wv0EpIjOYElp
-          mlQHa8PzxPERGj5HOvZ2pMtWgDQe2w7pAcBtYLV+vGoyywWsjy81HewgXZDwEwhl
-          MKIGzsrLyQndnEsx1HxDZ2VPgfAN11I9yX/2YQbnjCdMBN67+I5+XB44Pyi52+k1
-          Hf6cXxZrNf2OtFuusqtGMdCNLLC54aOfq3ZavwYOmSUXuxIMInvovL4ZP8o0YU/w
-          3DHwCJeN3OWPTYZQmFpT3/QfhfMO1SXQRZB/6Pw8O6YoRZuXbkQpATSIgLbuTsjQ
-          wlPBGmTlUarQxum5KrJQfhTPoX1+/GgtpX+soZDUBr8tLgjHo1M4vvwRhAwdAj62
-          OwIDAQAB
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuZ8FfRMOxklApx/VmUOr
+          K/ydw+4JByg/XRkn9vRSv5zhBsKDGo5FltyQ2yCO4VX7dG/UatydPj55b+RbWpuX
+          BNWkeLbUTloAY1eVnNjMJ66NbUIzDuelODWu71TzMtGhmLhmryJkBhDRnLYWab6O
+          /dpbYh3ulfpWbUlYMybWuTqpmBuXZspdzoijSZjFBY5DE5FsFt+vpPRY4VtsSzB3
+          W2iCVs/fyo2zRh/TsB5QFWkLfbpBPmcgeKCRiLuhrQLKFCDTB7DHdoHZxjWuU9IA
+          n9c7/pC/i6LTJimK07PIvjXDmo3d8hI2PrzE9TM4pXxlA7kA9dZlVRka978tD1q3
+          bwIDAQAB
           -----END PUBLIC KEY-----
       # 外部から取得したトークン（iss が localhost の場合）
       # - algorithm: RS256

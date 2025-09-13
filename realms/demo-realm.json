@@ -134,7 +134,46 @@
         "microprofile-jwt",
         "offline_access"
       ]
-    }
+    },
+    {
+  "clientId": "mashup-balance-inquiry-only",
+  "name": "mashup-balance-inquiry-only",
+  "protocol": "openid-connect",
+  "publicClient": true,
+  "standardFlowEnabled": true,
+  "implicitFlowEnabled": false,
+  "directAccessGrantsEnabled": false,
+  "serviceAccountsEnabled": false,
+  "fullScopeAllowed": true,
+  "rootUrl": "http://localhost:3000",
+  "baseUrl": "/",
+  "redirectUris": [
+    "http://localhost:3000/*"
+  ],
+  "webOrigins": [
+    "http://localhost:3000"
+  ],
+  "attributes": {
+    "pkce.code.challenge.method": "S256",
+    "oauth2.device.authorization.grant.enabled": "false",
+    "post.logout.redirect.uris": "+"
+  },
+  "defaultClientScopes": [
+    "basic",
+    "roles",
+    "web-origins",
+    "profile",
+    "email"
+  ],
+  "optionalClientScopes": [
+    "address",
+    "phone",
+    "offline_access",
+    "microprofile-jwt",
+    "acr"
+  ]
+}
+
   ],
 
   "clientScopes": [

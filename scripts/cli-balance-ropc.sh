@@ -71,6 +71,9 @@ TOK_JSON=$(curl -sS -X POST -H "Content-Type: application/x-www-form-urlencoded"
 echo "$TOK_JSON" | jq .
 
 ACCESS_TOKEN=$(jq -r '.access_token // empty' <<<"$TOK_JSON")
+
+echo "ACCESS_TOKEN= $ACCESS_TOKEN"
+
 REFRESH_TOKEN=$(jq -r '.refresh_token // empty' <<<"$TOK_JSON")
 if [[ -z "$ACCESS_TOKEN" || "$ACCESS_TOKEN" == "null" ]]; then
   echo "[error] トークン取得失敗"; exit 1

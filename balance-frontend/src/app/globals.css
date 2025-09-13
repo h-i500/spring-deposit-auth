@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* お好みの全体スタイル（任意） */
+:root {
+  color-scheme: light;
+}
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+}
