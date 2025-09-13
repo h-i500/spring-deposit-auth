@@ -1,11 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "daisyui";
+/* 必要ならテーマ設定も可能 */
+/* お好み */
+:root { color-scheme: light; }
+body { background:#f9fafb; color:#111827; -webkit-font-smoothing:antialiased; }
 
-/* お好みの全体スタイル（任意） */
-:root {
-  color-scheme: light;
-}
-body {
-  @apply bg-gray-50 text-gray-900 antialiased;
-}
