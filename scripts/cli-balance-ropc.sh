@@ -12,6 +12,23 @@ CLIENT_ID="${CLIENT_ID:-mashup-cli-ropc}"
 USERNAME="${1:-testuser}"
 PASSWORD="${2:-password}"
 
+TOKEN=$(curl -s -X POST "http://localhost:8080/realms/master/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=admin" \
+  -d "password=admin" \
+  -d "grant_type=password" \
+  -d "client_id=admin-cli" | jq -r .access_token)
+
+# クライアント ID を探す
+CID=$(curl -s -H "Authorization: Bearer $TOKEN" \
+  "http://localhost:8080/admin/realms/demo-realm/clients?clientId=mashup-cli-ropc" \
+  | jq -r '.[0].id')
+
+# シークレットを取得
+CLIENT_SECRET=$(curl -s -H "Authorization: Bearer $TOKEN" \
+  "http://localhost:8080/admin/realms/demo-realm/clients/$CID/client-secret" \
+  | jq -r .value)
+
 # 第3引数があればそれを、なければ環境変数 CLIENT_SECRET を使う。両方無ければ空。
 CLIENT_SECRET="${3:-${CLIENT_SECRET:-}}"
 
@@ -83,3 +100,4 @@ echo "[info] owner = $OWNER"
 echo "---- call via Kong ----"
 curl -i -H "Authorization: Bearer $ACCESS_TOKEN" \
   "http://localhost:8000/balance-inquiry/$OWNER"
+

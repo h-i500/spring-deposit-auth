@@ -92,13 +92,11 @@ ACCESS_TOKEN の有効期限（既定 900 秒）内に都度取得して使う�
 以下コマンドを実行する。
 ```
 $ chmod +x scripts/cli-balance-ropc.sh
+$ scripts/cli-balance-ropc.sh testuser password
+もし、CLIENT_SECRET を知っているなら、例えば以下
 $ scripts/cli-balance-ropc.sh testuser password ppXevOmtsc7nqFq0THeurHflbLdUsq0N
 ```
 
-2. 長期無人運用したい（オフライン token も取得）
-すでに案内した手順Bのとおり、mashup-cli-ropc クライアントに offline_access クライアントスコープを関連付けたうえで、以下を実行
-```
-$ OFFLINE=1 scripts/cli-balance-ropc.sh testuser password <CLIENT_SECRET>
-```
+
 
 
