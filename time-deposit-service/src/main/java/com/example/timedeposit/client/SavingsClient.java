@@ -40,15 +40,33 @@ public class SavingsClient {
     }
 
 
+    // @SuppressWarnings("unchecked")
+    // SavingsClient に “ヘッダ付き版” を追加（既存メソッドはそのまま）
+    // 既存：3引数版（Idempotency-Key あり）
+    // public Map<String, Object> deposit(UUID accountId, BigDecimal amount, String idempotencyKey) {
+    //     return rest.post()
+    //             .uri(this.baseUrl + "/accounts/{id}/deposit", accountId)
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .header(HttpHeaders.AUTHORIZATION, bearer())
+    //             .header("Idempotency-Key", idempotencyKey)
+    //             .body(Map.of("amount", amount))
+    //             .retrieve()
+    //             .body(Map.class);
+    // }
     @SuppressWarnings("unchecked")
     // SavingsClient に “ヘッダ付き版” を追加（既存メソッドはそのまま）
     // 既存：3引数版（Idempotency-Key あり）
     public Map<String, Object> deposit(UUID accountId, BigDecimal amount, String idempotencyKey) {
-        return rest.post()
+        RestClient.RequestBodySpec req = rest.post()
                 .uri(this.baseUrl + "/accounts/{id}/deposit", accountId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, bearer())
-                .header("Idempotency-Key", idempotencyKey)
+                .header(HttpHeaders.AUTHORIZATION, bearer());
+
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            req = req.header("Idempotency-Key", idempotencyKey);
+        }
+
+        return req
                 .body(Map.of("amount", amount))
                 .retrieve()
                 .body(Map.class);
@@ -60,15 +78,33 @@ public class SavingsClient {
     }
 
 
+    // @SuppressWarnings("unchecked")
+    // SavingsClient に “ヘッダ付き版” を追加（既存メソッドはそのまま）
+    // 既存：3引数版（Idempotency-Key あり）
+    // public Map<String, Object> withdraw(UUID accountId, BigDecimal amount, String idempotencyKey) {
+    //     return rest.post()
+    //             .uri(this.baseUrl + "/accounts/{id}/withdraw", accountId)
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .header(HttpHeaders.AUTHORIZATION, bearer())
+    //             .header("Idempotency-Key", idempotencyKey)
+    //             .body(Map.of("amount", amount))
+    //             .retrieve()
+    //             .body(Map.class);
+    // }
     @SuppressWarnings("unchecked")
     // SavingsClient に “ヘッダ付き版” を追加（既存メソッドはそのまま）
     // 既存：3引数版（Idempotency-Key あり）
     public Map<String, Object> withdraw(UUID accountId, BigDecimal amount, String idempotencyKey) {
-        return rest.post()
+        RestClient.RequestBodySpec req = rest.post()
                 .uri(this.baseUrl + "/accounts/{id}/withdraw", accountId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, bearer())
-                .header("Idempotency-Key", idempotencyKey)
+                .header(HttpHeaders.AUTHORIZATION, bearer());
+
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            req = req.header("Idempotency-Key", idempotencyKey);
+        }
+
+        return req
                 .body(Map.of("amount", amount))
                 .retrieve()
                 .body(Map.class);

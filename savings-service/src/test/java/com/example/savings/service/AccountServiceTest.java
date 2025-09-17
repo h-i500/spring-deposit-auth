@@ -1,4 +1,4 @@
-// 修正版: src/test/java/com/example/savings/service/AccountServiceTest.java
+// src/test/java/com/example/savings/service/AccountServiceTest.java
 package com.example.savings.service;
 
 import com.example.savings.model.Account;
@@ -15,6 +15,18 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * サービス層のユニットテスト。
+ *
+ * 目的:
+ * - ビジネスロジック（入出金の加減算やバリデーション）を純粋に検証する。
+ *
+ * 特徴:
+ * - AccountRepository は Mockito でモック化（DB に依存しない）。
+ * - 例外発生条件や境界値（0, マイナス、残高不足）を網羅。
+ * - @Transactional の下でエンティティのフィールドを書き換える設計のため、
+ *   repo.save(...) の呼び出し検証は行っていない（=JPA のフラッシュ前提）。
+ */
 class AccountServiceTest {
 
     private AccountRepository repo;
@@ -30,7 +42,6 @@ class AccountServiceTest {
     @DisplayName("create: owner を設定し残高0で保存する")
     void create_ok() {
         var saved = new Account();
-        // saved の id は null でも可（テストで id を検証していない）
         saved.setOwner("alice");
         saved.setBalance(BigDecimal.ZERO);
 
@@ -39,7 +50,7 @@ class AccountServiceTest {
         var result = service.create("alice");
         assertThat(result.getOwner()).isEqualTo("alice");
         assertThat(result.getBalance()).isEqualByComparingTo("0");
-        verify(repo).save(any(Account.class));
+        verify(repo).save(any(Account.class)); // save が一度呼ばれること
     }
 
     @Test
@@ -47,6 +58,7 @@ class AccountServiceTest {
     void get_notFound() {
         var id = UUID.randomUUID();
         when(repo.findById(id)).thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> service.get(id))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Account not found");
@@ -64,6 +76,7 @@ class AccountServiceTest {
 
         var res = service.deposit(id, new BigDecimal("25.50"));
         assertThat(res.getBalance()).isEqualByComparingTo("125.50");
+        // エンティティ更新方式のため save は必須ではない
         verify(repo, never()).save(any());
     }
 
@@ -71,7 +84,8 @@ class AccountServiceTest {
     @DisplayName("deposit: 0以下は IllegalArgumentException")
     void deposit_ng_amount() {
         var id = UUID.randomUUID();
-        var a = new Account(); a.setBalance(BigDecimal.TEN);
+        var a = new Account();
+        a.setBalance(BigDecimal.TEN);
         when(repo.findById(id)).thenReturn(Optional.of(a));
 
         assertThatThrownBy(() -> service.deposit(id, new BigDecimal("0")))
@@ -84,7 +98,8 @@ class AccountServiceTest {
     @DisplayName("withdraw: 残高以内なら減算される")
     void withdraw_ok() {
         var id = UUID.randomUUID();
-        var a = new Account(); a.setBalance(new BigDecimal("100.00"));
+        var a = new Account();
+        a.setBalance(new BigDecimal("100.00"));
         when(repo.findById(id)).thenReturn(Optional.of(a));
 
         var res = service.withdraw(id, new BigDecimal("40.00"));
@@ -95,7 +110,8 @@ class AccountServiceTest {
     @DisplayName("withdraw: 残高不足は IllegalStateException")
     void withdraw_insufficient() {
         var id = UUID.randomUUID();
-        var a = new Account(); a.setBalance(new BigDecimal("30"));
+        var a = new Account();
+        a.setBalance(new BigDecimal("30"));
         when(repo.findById(id)).thenReturn(Optional.of(a));
 
         assertThatThrownBy(() -> service.withdraw(id, new BigDecimal("31")))
