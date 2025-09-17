@@ -2,7 +2,7 @@ package com.example.timedeposit.service;
 
 import com.example.timedeposit.api.TransferRequest;
 import com.example.timedeposit.client.SavingsClient;
-import com.example.timedeposit.model.TimeDeposit; // ← model パッケージ
+import com.example.timedeposit.model.TimeDeposit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ public class TransferService {
      * オーケストレーション：withdraw → create TD（失敗時は補償 deposit）
      */
     // ← ここポイント：Idempotency-Key を受け取る引数を追加
-    @Transactional // ← 失敗時は TD のDB書込をロールバックさせたいので noRollbackFor は外すのが安全
+    @Transactional
     public UUID transfer(TransferRequest req, String idempotencyKey) {
         String wdKey = addSfx(idempotencyKey, ":WD");
         String cpKey = addSfx(idempotencyKey, ":CP");

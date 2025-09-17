@@ -39,16 +39,6 @@ public class SavingsClient {
         throw new IllegalStateException("No JWT available to propagate (Authorization header is required)");
     }
 
-    // @SuppressWarnings("unchecked")
-    // public Map<String, Object> deposit(UUID accountId, BigDecimal amount) {
-    //     return rest.post()
-    //             .uri(this.baseUrl + "/accounts/{id}/deposit", accountId)
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .header(HttpHeaders.AUTHORIZATION, bearer())
-    //             .body(Map.of("amount", amount))
-    //             .retrieve()
-    //             .body(Map.class);
-    // }
 
     @SuppressWarnings("unchecked")
     // SavingsClient に “ヘッダ付き版” を追加（既存メソッドはそのまま）

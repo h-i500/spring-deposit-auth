@@ -9,8 +9,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "time_deposits")
 public class TimeDeposit {
-    // public enum Status { OPEN, CLOSED }
-    public enum Status { OPEN, CLOSING, CLOSED }  // ← CLOSING を追加
+    public enum Status { OPEN, CLOSING, CLOSED }
 
     @Id
     private UUID id;

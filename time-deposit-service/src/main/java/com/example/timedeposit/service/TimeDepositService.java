@@ -1,11 +1,8 @@
 package com.example.timedeposit.service;
 
-// import com.example.timedeposit.api.TransferRequest;
 import com.example.timedeposit.client.SavingsClient;
 import com.example.timedeposit.model.TimeDeposit;
 import com.example.timedeposit.repository.TimeDepositRepository;
-
-// import main.java.com.example.timedeposit.client.SavingsClient;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,34 +54,33 @@ public class TimeDepositService {
         return payout;
     }
 
-    // @Tran
     
     @Transactional
-public BigDecimal closeAndTransfer(UUID id, UUID toAccountId, Instant now,
-                                   SavingsClient savingsClient, String idempotencyKey) {
-    TimeDeposit td = get(id);
-    if (td.getStatus() == TimeDeposit.Status.CLOSED) {
-        return td.getPayoutAmount(); // 冪等
-    }
-    if (now.isBefore(td.getMaturityAt())) {
-        throw new IllegalStateException("not matured yet");
-    }
-    td.setStatus(TimeDeposit.Status.CLOSING);
+    public BigDecimal closeAndTransfer(UUID id, UUID toAccountId, Instant now,
+                                    SavingsClient savingsClient, String idempotencyKey) {
+        TimeDeposit td = get(id);
+        if (td.getStatus() == TimeDeposit.Status.CLOSED) {
+            return td.getPayoutAmount(); // 冪等
+        }
+        if (now.isBefore(td.getMaturityAt())) {
+            throw new IllegalStateException("not matured yet");
+        }
+        td.setStatus(TimeDeposit.Status.CLOSING);
 
-    BigDecimal payout = calculatePayout(td);
+        BigDecimal payout = calculatePayout(td);
 
-    String closeKey = (idempotencyKey == null || idempotencyKey.isBlank()) ? null : idempotencyKey + ":CLOSE";
-    if (closeKey != null) {
-        savingsClient.deposit(toAccountId, payout, closeKey);
-    } else {
-        savingsClient.deposit(toAccountId, payout);
+        String closeKey = (idempotencyKey == null || idempotencyKey.isBlank()) ? null : idempotencyKey + ":CLOSE";
+        if (closeKey != null) {
+            savingsClient.deposit(toAccountId, payout, closeKey);
+        } else {
+            savingsClient.deposit(toAccountId, payout);
+        }
+
+        td.setStatus(TimeDeposit.Status.CLOSED);
+        td.setPayoutAmount(payout);
+        td.setPayoutAccount(toAccountId);
+        td.setClosedAt(now);
+        return payout;
     }
-
-    td.setStatus(TimeDeposit.Status.CLOSED);
-    td.setPayoutAmount(payout);
-    td.setPayoutAccount(toAccountId);
-    td.setClosedAt(now);
-    return payout;
-}
 
 }
