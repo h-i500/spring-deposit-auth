@@ -1,7 +1,5 @@
 package com.example.timedeposit;
 
-// package your.package;
-
 import org.springframework.context.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
