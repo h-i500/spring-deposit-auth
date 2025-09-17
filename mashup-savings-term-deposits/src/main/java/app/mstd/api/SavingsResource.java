@@ -1,12 +1,12 @@
 
 package app.mstd.api;
 
-import io.quarkus.oidc.AccessTokenCredential;
+// import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.security.Authenticated;
-import io.quarkus.security.identity.SecurityIdentity;
-import io.smallrye.mutiny.Uni;
-import io.vertx.core.json.JsonObject;
-import io.vertx.mutiny.ext.web.client.WebClient;
+// import io.quarkus.security.identity.SecurityIdentity;
+// import io.smallrye.mutiny.Uni;
+// import io.vertx.core.json.JsonObject;
+// import io.vertx.mutiny.ext.web.client.WebClient;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import java.util.List;
-import java.util.Map;
+// import java.util.Map;
 
-import app.mstd.client.SavingsServiceClient;
+// import app.mstd.client.SavingsServiceClient;
 
 @Path("/api/savings")
 @Consumes(MediaType.APPLICATION_JSON)

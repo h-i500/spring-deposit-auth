@@ -111,17 +111,17 @@ public class DebugResource {
     }
 
     // 共通プロキシ（既存メソッドの体裁に合わせて共通化）
-    private Uni<Response> proxyGet(String url) {
-        return webClient
-                .getAbs(url)
-                .putHeader("Authorization", bearer())
-                .putHeader("Accept", MediaType.APPLICATION_JSON)
-                .send()
-                .onItem().transform(resp -> Response.status(resp.statusCode())
-                        .entity(resp.bodyAsString())
-                        .type(MediaType.APPLICATION_JSON)
-                        .build());
-    }
+    // private Uni<Response> proxyGet(String url) {
+    //     return webClient
+    //             .getAbs(url)
+    //             .putHeader("Authorization", bearer())
+    //             .putHeader("Accept", MediaType.APPLICATION_JSON)
+    //             .send()
+    //             .onItem().transform(resp -> Response.status(resp.statusCode())
+    //                     .entity(resp.bodyAsString())
+    //                     .type(MediaType.APPLICATION_JSON)
+    //                     .build());
+    // }
 
 
     private String bearer() {
