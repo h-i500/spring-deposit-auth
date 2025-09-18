@@ -5,7 +5,7 @@ import static io.restassured.RestAssured.given;
 
 import app.mstd.mashup.support.WireMockLifecycle;
 // import app.mstd.mashup.support.WireMockStubs;
-import app.mstd.mashup.WireMockStubs;
+// import app.mstd.mashup.WireMockStubs;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
