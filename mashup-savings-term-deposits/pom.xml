@@ -1,19 +1,24 @@
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>app.mstd</groupId>
   <artifactId>mashup-savings-term-deposits</artifactId>
   <version>1.0.0</version>
-
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>17</maven.compiler.release>
+
+    <!-- Quarkus BOM を使って依存バージョンを一元管理 -->
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.version>3.13.2</quarkus.platform.version>
   </properties>
 
+  <!-- Quarkus の BOM を import -->
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -27,13 +32,14 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- 本体 -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-jackson</artifactId> <!-- ↁE新名称 -->
+      <artifactId>quarkus-rest-jackson</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-client-jackson</artifactId> <!-- ↁE新名称 -->
+      <artifactId>quarkus-rest-client-jackson</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -47,6 +53,44 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-client-oidc-token-propagation</artifactId>
     </dependency>
+
+    <!-- テスト（Spring Boot の starter は使わない） -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- 追加のテスト系ライブラリ（BOM 管理外のため版を明示） -->
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8</artifactId>
+      <version>2.35.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.25.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Mock 認証用（@TestSecurity） -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-security</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -57,10 +101,15 @@
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus.platform.version}</version>
         <executions>
-          <execution><goals><goal>build</goal></goals></execution>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
-      <!-- ☁E念のため compiler と resources めEUTF-8 明示 -->
+
+      <!-- 念のためエンコーディングを明示 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -77,15 +126,22 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+
+      <!-- 不要依存の混入防止（任意） -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.4.1</version>
-        <executions><execution><goals><goal>enforce</goal></goals></execution></executions>
+        <executions>
+          <execution>
+            <goals><goal>enforce</goal></goals>
+          </execution>
+        </executions>
         <configuration>
           <rules>
             <bannedDependencies>
               <excludes>
+                <!-- RESTEasy 系を禁止（REST(Elytron) 旧系の誤混入防止） -->
                 <exclude>io.quarkus:quarkus-resteasy*</exclude>
                 <exclude>org.jboss.resteasy:*</exclude>
               </excludes>
